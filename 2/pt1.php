@@ -17,7 +17,7 @@ foreach ($report as $k=>$v) {
   }
 }
 
-print $safe;
+echo $safe;
 
 function isUnsafe($numbers) {   
     $isIncreasing = $numbers[1] > $numbers[0];

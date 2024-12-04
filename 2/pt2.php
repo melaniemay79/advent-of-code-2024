@@ -1,4 +1,62 @@
 <?php
 $lines = file('input.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
+$report = [];
+
+foreach ($lines as $line) {
+    if (empty(trim($line))) continue;
+    $v = explode(' ', trim($line));
+    $v = array_map('intval', $v);
+    $report[] = $v;
+}
+
+$safe = 0;
+foreach ($report as $k=>$v) {
+  if (! isUnsafe($v)) {
+      $safe++;
+  }
+}
+
+echo $safe;
+
+function isUnsafe($numbers) {   
+    if (!isUnsafeSequence($numbers)) {
+        return false;
+    }
+    
+    for ($i = 0; $i < count($numbers); $i++) {
+        $tempArray = array_values(array_filter($numbers, function($key) use ($i) {
+            return $key !== $i;
+        }, ARRAY_FILTER_USE_KEY));
+        
+        if (!isUnsafeSequence($tempArray)) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function isUnsafeSequence($numbers) {
+    if (count($numbers) < 2) return false;
+    
+    $isIncreasing = $numbers[1] > $numbers[0];
+    
+    for ($i = 0; $i < count($numbers) - 1; $i++) {
+        $diff = $numbers[$i + 1] - $numbers[$i];
+        
+        if ($isIncreasing && $diff <= 0) {
+            return true;
+        }
+        if (!$isIncreasing && $diff >= 0) {
+            return true;
+        }
+        
+        if (abs($diff) > 3 || $diff == 0) {
+            return true;
+        }
+    }
+    
+    return false;
+}
 ?>
