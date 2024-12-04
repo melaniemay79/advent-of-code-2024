@@ -1,6 +1,8 @@
 <?php
 $lines = file('input.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
+if ($lines === false) exit('Failed to read input file');
+
 $set1 = [];
 $set2 = [];
 
@@ -17,7 +19,7 @@ $sum = 0;
 
 foreach ($set1 as $value) {
     $occurrences = array_count_values($set2)[$value] ?? 0;
-    $sum += $value * $occurrences;
+    $sum += intval($value) * $occurrences;
 }
 
 echo $sum;

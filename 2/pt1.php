@@ -1,6 +1,8 @@
 <?php
 $lines = file('input.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
+if ($lines === false) exit('Failed to read input file');
+
 $report = [];
 
 foreach ($lines as $line) {
@@ -19,7 +21,11 @@ foreach ($report as $k=>$v) {
 
 echo $safe;
 
-function isUnsafe($numbers) {   
+/**
+ * @param int[] $numbers
+ */
+function isUnsafe(array $numbers): bool
+{   
     $isIncreasing = $numbers[1] > $numbers[0];
     
     for ($i = 0; $i < count($numbers) - 1; $i++) {
