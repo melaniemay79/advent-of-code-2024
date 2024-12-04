@@ -7,10 +7,12 @@ $set1 = [];
 $set2 = [];
 
 foreach ($lines as $line) {
-    list($v1, $v2) = preg_split('/\s+/', trim($line));
-
-    $set1[] = trim($v1);
-    $set2[] = trim($v2);
+    $parts = preg_split('/\s+/', trim($line));
+    if ($parts !== false && count($parts) >= 2) {
+        list($v1, $v2) = $parts;
+        $set1[] = trim($v1);
+        $set2[] = trim($v2);
+    }
 }
 
 $set1 = array_map('trim', $set1);
