@@ -19,7 +19,7 @@ foreach ($report as $k=>$v) {
   }
 }
 
-echo $safe;
+echo $safe; // 717
 
 /**
  * @param int[] $numbers

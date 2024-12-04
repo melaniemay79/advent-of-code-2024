@@ -22,5 +22,5 @@ foreach ($set1 as $value) {
     $sum += intval($value) * $occurrences;
 }
 
-echo $sum;
+echo $sum; //24643097
 ?>

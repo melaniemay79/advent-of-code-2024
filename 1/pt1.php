@@ -20,5 +20,5 @@ $sum = array_sum(array_map(function($v1, $v2) {
     return abs(intval($v1) - intval($v2));
 }, $set1, $set2));
 
-echo $sum;
+echo $sum; //29709735
 ?>
