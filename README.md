@@ -10,8 +10,8 @@ So far, all of my solutions are in PHP. I'm using PHP 8.13.14 and running my cod
 <summary>Day 1: Historian Hysteria</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 The **Chief Historian** is always present for the big Christmas sleigh launch, but nobody has seen him in months! Last anyone heard, he was visiting locations that are historically significant to the North Pole; a group of Senior Historians has asked you to accompany them as they check the places they think he was most likely to visit.
 
@@ -62,8 +62,8 @@ My solution and input can be found here: [Day 1](https://github.com/melaniemay79
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
 
@@ -108,8 +108,8 @@ My solution and input can be found here: [Day 1](https://github.com/melaniemay79
 <summary>Day 2: Red-Nosed Reports</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Fortunately, the first location The Historians want to search isn't a long walk from the Chief Historian's office.
 
@@ -155,8 +155,8 @@ My solution and input can be found here: [Day 2](https://github.com/melaniemay79
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 The engineers are surprised by the low number of safe reports until they realize they forgot to tell you about the Problem Dampener.
 
@@ -187,8 +187,8 @@ My solution and input can be found here: [Day 2](https://github.com/melaniemay79
 <summary>Day 3: Mull It Over</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 "Our computers are having issues, so I have no idea if we have any Chief Historians in stock! You're welcome to check the warehouse, though," says the mildly flustered shopkeeper at the [North Pole Toboggan Rental Shop](https://adventofcode.com/2020/day/2). The Historians head out to take a look.
 
@@ -214,8 +214,8 @@ My solution and input can be found here: [Day 3](https://github.com/melaniemay79
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 As you scan through the corrupted memory, you notice that some of the conditional statements are also still intact. If you handle some of the uncorrupted conditional statements in the program, you might be able to get an even more accurate result.
 
@@ -239,8 +239,8 @@ My solution and input can be found here: [Day 3](https://github.com/melaniemay79
 <summary>Day 4: Ceres Search</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 "Looks like the Chief's not here. Next!" One of The Historians pulls out a device and pushes the only button on it. After a brief flash, you recognize the interior of the [Ceres monitoring station](https://adventofcode.com/2019/day/10)!
 
@@ -294,8 +294,8 @@ My solution and input can be found here: [Day 4](https://github.com/melaniemay79
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 The Elf looks quizzically at you. Did you misunderstand the assignment?
 
@@ -337,8 +337,8 @@ My solution and input can be found here: [Day 4](https://github.com/melaniemay79
 <summary>Day 5: Print Queue</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Satisfied with their search on Ceres, the squadron of scholars suggests subsequently scanning the stationery stacks of sub-basement 17.
 
@@ -427,8 +427,8 @@ My solution and input can be found here: [Day 5](https://github.com/melaniemay79
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -440,8 +440,8 @@ Coming soon...
 <summary>Day 6: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -449,8 +449,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -462,8 +462,8 @@ Coming soon...
 <summary>Day 7: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -471,8 +471,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -484,8 +484,8 @@ Coming soon...
 <summary>Day 8: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -493,8 +493,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -506,8 +506,8 @@ Coming soon...
 <summary>Day 9: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -515,8 +515,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -528,8 +528,8 @@ Coming soon...
 <summary>Day 10: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -537,8 +537,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -550,8 +550,8 @@ Coming soon...
 <summary>Day 11: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -559,8 +559,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -572,8 +572,8 @@ Coming soon...
 <summary>Day 12: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -581,8 +581,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -594,8 +594,8 @@ Coming soon...
 <summary>Day 13: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -603,8 +603,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -616,8 +616,8 @@ Coming soon...
 <summary>Day 14: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -625,8 +625,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -638,8 +638,8 @@ Coming soon...
 <summary>Day 15: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -647,8 +647,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -660,8 +660,8 @@ Coming soon...
 <summary>Day 16: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -669,8 +669,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -682,8 +682,8 @@ Coming soon...
 <summary>Day 17: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -691,8 +691,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -704,8 +704,8 @@ Coming soon...
 <summary>Day 18: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -713,8 +713,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -726,8 +726,8 @@ Coming soon...
 <summary>Day 19: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -735,8 +735,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -748,8 +748,8 @@ Coming soon...
 <summary>Day 20: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -757,8 +757,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -770,8 +770,8 @@ Coming soon...
 <summary>Day 21: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -779,8 +779,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -792,8 +792,8 @@ Coming soon...
 <summary>Day 22: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -801,8 +801,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -814,8 +814,8 @@ Coming soon...
 <summary>Day 23: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -823,8 +823,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -836,8 +836,8 @@ Coming soon...
 <summary>Day 24: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -845,8 +845,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
@@ -858,8 +858,8 @@ Coming soon...
 <summary>Day 25: TBD</summary>
 
 <details>
-<summary style="margin-left: 1rem;">Part 1</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 1</summary>
+<div>
 
 Coming soon...
 
@@ -867,8 +867,8 @@ Coming soon...
 </details>
 
 <details>
-<summary style="margin-left: 1rem;">Part 2</summary>
-<div style="margin-left: 2rem;">
+<summary>Part 2</summary>
+<div>
 
 Coming soon...
 
