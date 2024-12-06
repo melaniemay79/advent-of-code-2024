@@ -12,7 +12,7 @@ class DayOneTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->file = __DIR__.'/data/input_01.txt';
+        $this->file = __DIR__.'/../data/input_01.txt';
     }
 
     public function test_constructor_processes_and_sorts_input_correctly(): void
