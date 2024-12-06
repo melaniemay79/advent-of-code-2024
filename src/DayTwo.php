@@ -1,6 +1,6 @@
 <?php
 
-namespace AdventOfCode2024\Two;
+namespace AdventOfCode2024;
 
 class DayTwo
 {
@@ -9,9 +9,12 @@ class DayTwo
      */
     private array $report = [];
 
-    public function __construct()
+    /**
+     * @param  string  $file
+     */
+    public function __construct($file)
     {
-        $input = file(__DIR__.'/input.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $input = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if ($input === false) {
             exit('Failed to read input file');

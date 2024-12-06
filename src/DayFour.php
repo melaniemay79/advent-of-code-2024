@@ -1,6 +1,6 @@
 <?php
 
-namespace AdventOfCode2024\Four;
+namespace AdventOfCode2024;
 
 class DayFour
 {
@@ -11,9 +11,12 @@ class DayFour
      */
     private array $lines;
 
-    public function __construct()
+    /**
+     * @param  string  $file
+     */
+    public function __construct($file)
     {
-        $input = file_get_contents(__DIR__.'/input.txt');
+        $input = file_get_contents($file);
 
         if ($input === false) {
             exit('Failed to read input file');

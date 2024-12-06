@@ -1,14 +1,17 @@
 <?php
 
-namespace AdventOfCode2024\Three;
+namespace AdventOfCode2024;
 
 class DayThree
 {
     private string $input;
 
-    public function __construct()
+    /**
+     * @param  string  $file
+     */
+    public function __construct($file)
     {
-        $input = file_get_contents(__DIR__.'/input.txt');
+        $input = file_get_contents($file);
 
         if ($input === false) {
             exit('Failed to read input file');

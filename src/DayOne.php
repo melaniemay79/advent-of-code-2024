@@ -1,6 +1,8 @@
 <?php
 
-namespace AdventOfCode2024\One;
+namespace AdventOfCode2024;
+
+use RuntimeException;
 
 class DayOne
 {
@@ -14,12 +16,19 @@ class DayOne
      */
     private array $set2 = [];
 
-    public function __construct()
+    /**
+     * @param  string  $file
+     */
+    public function __construct($file)
     {
-        $input = file(__DIR__.'/input.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (! file_exists($file)) {
+            throw new RuntimeException('File not found');
+        }
+
+        $input = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if ($input === false) {
-            exit('Failed to read input file');
+            throw new RuntimeException('Failed to read input file');
         }
 
         $this->processInput($input);
@@ -40,6 +49,9 @@ class DayOne
         }
         $this->set1 = array_map('trim', $this->set1);
         $this->set2 = array_map('trim', $this->set2);
+
+        sort($this->set1);
+        sort($this->set2);
     }
 
     public function calculateSumPartOne(): int
