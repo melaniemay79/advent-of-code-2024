@@ -2,7 +2,9 @@
 
 These are my solutions for the [Advent of Code 2024](https://adventofcode.com/2024).
 
-So far, all of my solutions are in PHP. I'm using PHP 8.13.14 and running my code locally with [Tinkerwell](https://tinkerwell.app/). I am also using [PHPStan](https://phpstan.org/) @level 9 to check for errors in my code.
+My solutions are MVC-based PHP. I'm using a controller in [Laravel](https://laravel.com/) to call the classes. I'm using level 9 [PHPStan](https://phpstan.org/) to check for errors.
+
+You can view the output of the solutions [on my personal website](https://www.punktress.com/advent-of-code/2024).
 
 ## Daily Solutions
 
