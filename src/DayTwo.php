@@ -2,6 +2,8 @@
 
 namespace AdventOfCode2024;
 
+use RuntimeException;
+
 class DayTwo
 {
     /**
@@ -14,6 +16,10 @@ class DayTwo
      */
     public function __construct($file)
     {
+        if (! file_exists($file)) {
+            throw new RuntimeException('File not found');
+        }
+
         $input = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if ($input === false) {
@@ -84,7 +90,7 @@ class DayTwo
     /**
      * @param  int[]  $numbers
      */
-    public function isUnsafeWithSequence(array $numbers): bool
+    private function isUnsafeWithSequence(array $numbers): bool
     {
         if (! $this->isUnsafeSequence($numbers)) {
             return false;
@@ -106,7 +112,7 @@ class DayTwo
     /**
      * @param  int[]  $numbers
      */
-    public function isUnsafeSequence(array $numbers): bool
+    private function isUnsafeSequence(array $numbers): bool
     {
         if (count($numbers) < 2) {
             return false;

@@ -2,6 +2,8 @@
 
 namespace AdventOfCode2024;
 
+use RuntimeException;
+
 class DayFour
 {
     private string $input;
@@ -16,6 +18,10 @@ class DayFour
      */
     public function __construct($file)
     {
+        if (! file_exists($file)) {
+            throw new RuntimeException('File not found');
+        }
+
         $input = file_get_contents($file);
 
         if ($input === false) {
