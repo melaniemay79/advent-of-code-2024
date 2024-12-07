@@ -68,13 +68,13 @@ class DayFiveTest extends TestCase
     {
         $dayFive = new DayFive($this->file);
 
-        $this->assertEquals(143, $dayFive->getSum());
+        $this->assertEquals(143, $dayFive->getSum(false));
     }
 
     public function test_calculate_sum_part_two_as_expected(): void
     {
         $dayFive = new DayFive($this->file);
 
-        $this->assertEquals(123, $dayFive->getCorrectedSum());
+        $this->assertEquals(123, $dayFive->getSum(true));
     }
 }

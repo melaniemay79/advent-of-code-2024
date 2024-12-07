@@ -9,24 +9,24 @@ class DayFive
     private string $input;
 
     /**
-     * @var array<array<string>>
+     * @var array<int, array<int, int>|bool>
      */
     private array $rules;
 
     /**
-     * @var array<array<string>>
+     * @var array<int, array<int, int>>
      */
     private array $updates;
 
     /**
-     * @var array<array<string>>
+     * @var array<int<0, max>, array<int, int>>
      */
-    private array $sorted;
+    private array $set1;
 
     /**
-     * @var array<array<string>>
+     * @var array<int<0, max>, array<int, int>>
      */
-    private array $corrected;
+    private array $set2;
 
     /**
      * @param  string  $file
@@ -51,129 +51,74 @@ class DayFive
     private function processInput(): void
     {
         $rules = $updates = [];
-        $lines = explode("\n", trim($this->input));
-        foreach ($lines as $line) {
-            if (empty(trim($line))) {
-                continue;
-            }
+        $lines = explode("\n\n", trim($this->input));
 
-            if (strpos($line, '|') !== false) {
-                $parts = array_map('trim', explode('|', trim($line)));
-                $rules[] = $parts;
-            } elseif (strpos($line, ',') !== false) {
-                $parts = array_map('trim', explode(',', trim($line)));
-                $updates[] = $parts;
-            }
-        }
+        $rules = array_map(function ($line) {
+            return array_map('intval', explode('|', trim($line)));
+        }, explode("\n", trim($lines[0])));
+
+        $updates = array_map(function ($line) {
+            return array_map('intval', explode(',', trim($line)));
+        }, explode("\n", trim($lines[1])));
 
         $this->rules = $rules;
         $this->updates = $updates;
     }
 
+    /**
+     * @param  array<int, array<int, int>|bool>  $rules
+     */
+    private function handleRules($rules): void
+    {
+        $this->rules = [];
+        foreach ($rules as $rule) {
+            if (is_array($rule) && isset($rule[0], $rule[1])) {
+                $this->rules[($rule[0] << 8) + $rule[1]] = true;
+            }
+        }
+    }
+
     private function handleUpdates(): void
     {
         $sorted = [];
+        $corrected = [];
         foreach ($this->updates as $update) {
             if ($this->checkRules($update)) {
                 $sorted[] = $update;
+            } else {
+                usort($update, function ($a, $b) {
+                    if (isset($this->rules[($a << 8) + $b])) {
+                        return -1;
+                    }
+                    if (isset($this->rules[($b << 8) + $a])) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+                $corrected[] = $update;
             }
         }
 
-        $this->sorted = $sorted;
-    }
-
-    private function handleCorrected(): void
-    {
-        $sorted = [];
-
-        foreach ($this->corrected as $corrected) {
-            $rules = [];
-            foreach ($this->rules as $rule) {
-                if (in_array($rule[0], $corrected) && in_array($rule[1], $corrected)) {
-                    $rules[] = $rule;
-                }
-            }
-
-            $sorted[] = $this->topologicalSortNumbers($corrected, $rules);
-        }
-
-        $this->sorted = $sorted;
+        $this->set1 = $sorted;
+        $this->set2 = $corrected;
     }
 
     /**
-     * @param  array<string>  $numbers
-     * @param  array<int<0, max>, array<string>>  $rules
-     * @return array<string>
+     * @param  bool  $corrected
      */
-    public function topologicalSortNumbers(array $numbers, array $rules): array
+    public function getSum($corrected = false): int
     {
-        $nodes = array_unique($numbers);
-
-        $inDegree = array_fill_keys($nodes, 0);
-
-        $adjacencyList = [];
-        foreach ($nodes as $node) {
-            $adjacencyList[$node] = [];
-        }
-
-        foreach ($rules as $rule) {
-            [$first, $second] = $rule;
-            if (in_array($first, $nodes) && in_array($second, $nodes)) {
-                $adjacencyList[$first][] = $second;
-                $inDegree[$second]++;
-            }
-        }
-
-        $queue = [];
-        foreach ($inDegree as $node => $degree) {
-            if ($degree === 0) {
-                $queue[] = $node;
-            }
-        }
-
-        $sorted = [];
-        while (! empty($queue)) {
-            $node = array_shift($queue);
-            $sorted[] = $node;
-
-            foreach ($adjacencyList[$node] as $neighbor) {
-                $inDegree[$neighbor]--;
-                if ($inDegree[$neighbor] === 0) {
-                    $queue[] = $neighbor;
-                }
-            }
-        }
-
-        if (count($sorted) !== count($nodes)) {
-            throw new RuntimeException('Graph has at least one cycle.');
-        }
-
-        return $sorted;
-    }
-
-    public function getSum(): int
-    {
+        $this->handleRules($this->rules);
         $this->handleUpdates();
 
-        $sum = 0;
-        foreach ($this->sorted as $pages) {
-            $mid = floor((count($pages) - 1) / 2);
-            $sum += $pages[$mid];
-        }
-
-        return $sum;
-    }
-
-    public function getCorrectedSum(): int
-    {
-        $this->handleUpdates();
-        $this->handleCorrected();
-        $sorted = [];
-        foreach ($this->corrected as $corrected) {
-            $sorted[] = $this->topologicalSortNumbers($corrected, $this->rules);
+        if ($corrected) {
+            $set = $this->set2;
+        } else {
+            $set = $this->set1;
         }
         $sum = 0;
-        foreach ($sorted as $pages) {
+        foreach ($set as $pages) {
             $mid = floor((count($pages) - 1) / 2);
             $sum += $pages[$mid];
         }
@@ -182,19 +127,15 @@ class DayFive
     }
 
     /**
-     * @param  array<string>  $update
+     * @param  array<int, int>  $update
      */
     private function checkRules($update): bool
     {
-        foreach ($this->rules as $rule) {
-            if (in_array($rule[0], $update) && in_array($rule[1], $update)) {
-                $key1 = array_search($rule[0], $update);
-                $key2 = array_search($rule[1], $update);
-                if ($key1 > $key2) {
-                    $this->corrected[] = $update;
-
-                    return false;
-                }
+        for ($i = 1; $i < count($update); $i++) {
+            $a = $update[$i - 1];
+            $b = $update[$i];
+            if (isset($this->rules[($b << 8) + $a])) {
+                return false;
             }
         }
 
