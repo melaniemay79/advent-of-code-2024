@@ -68,4 +68,12 @@ class DaySixTest extends TestCase
         $this->assertEquals(41, $guardPositions['guardPositions']);
         $this->assertEquals($expectedOutput, $guardPositions['output']);
     }
+
+    public function test_find_obstacles_returns_as_expected(): void
+    {
+        $daySix = new DaySix($this->file);
+
+        $obstacles = $daySix->createInfiniteLoops();
+        $this->assertEquals(6, $obstacles);
+    }
 }
