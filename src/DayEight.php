@@ -73,8 +73,19 @@ class DayEight
     {
         $antinodePositions = [];
 
+        if (! is_array($this->input) || empty($this->input) || ! is_array($this->input[0])) {
+            return [];
+        }
+
+        $gridWidth = count($this->input[0]);
+        $gridHeight = count($this->input);
+
         foreach ($antennas as $freq => $positions) {
             $n = count($positions);
+            if ($n < 2) {
+                continue;
+            }
+
             for ($i = 0; $i < $n; $i++) {
                 for ($j = $i + 1; $j < $n; $j++) {
                     [$x1, $y1] = $positions[$i];
@@ -88,14 +99,21 @@ class DayEight
                         $stepX = $dx / $gcd;
                         $stepY = $dy / $gcd;
 
-                        for ($k = -10; $k <= 10; $k++) {
+                        $minSteps = -max(
+                            ceil($x1 / abs($stepX ?: 1)),
+                            ceil($y1 / abs($stepY ?: 1))
+                        );
+                        $maxSteps = max(
+                            ceil(($gridWidth - $x1) / abs($stepX ?: 1)),
+                            ceil(($gridHeight - $y1) / abs($stepY ?: 1))
+                        );
+
+                        for ($k = $minSteps; $k <= $maxSteps; $k++) {
                             $x = $x1 + ($k * $stepX);
                             $y = $y1 + ($k * $stepY);
 
-                            if (is_array($this->input) &&
-                                is_array($this->input[0]) &&
-                                $x >= 0 && $x < count($this->input[0]) &&
-                                $y >= 0 && $y < count($this->input) &&
+                            if ($x >= 0 && $x < $gridWidth &&
+                                $y >= 0 && $y < $gridHeight &&
                                 $x == (int) $x && $y == (int) $y) {
                                 $antinodePositions[] = [(int) $x, (int) $y];
                             }
@@ -104,10 +122,8 @@ class DayEight
                 }
             }
 
-            if ($n > 1) {
-                foreach ($positions as $pos) {
-                    $antinodePositions[] = $pos;
-                }
+            foreach ($positions as $pos) {
+                $antinodePositions[] = $pos;
             }
         }
 
