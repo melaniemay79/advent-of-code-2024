@@ -54,8 +54,17 @@ class DayEightTest extends TestCase
     {
         $dayEight = new DayEight($this->file);
 
-        $results = $dayEight->countUniqueAntinodes();
+        $results = $dayEight->countUniqueAntinodes(false);
 
         $this->assertEquals(14, $results);
+    }
+
+    public function test_find_antinode_locations_in_line(): void
+    {
+        $dayEight = new DayEight($this->file);
+
+        $results = $dayEight->countUniqueAntinodes(true);
+
+        $this->assertEquals(34, $results);
     }
 }

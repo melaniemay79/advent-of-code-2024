@@ -69,7 +69,69 @@ class DayEight
      * @param  array<int|string, array<int, array<int, int>>>  $antennas
      * @return array<int, array<int, int>>
      */
-    public function calculateAntinodes(array $antennas): array
+    private function calculateAntinodesPart2(array $antennas): array
+    {
+        $antinodePositions = [];
+
+        foreach ($antennas as $freq => $positions) {
+            $n = count($positions);
+            for ($i = 0; $i < $n; $i++) {
+                for ($j = $i + 1; $j < $n; $j++) {
+                    [$x1, $y1] = $positions[$i];
+                    [$x2, $y2] = $positions[$j];
+
+                    $dx = $x2 - $x1;
+                    $dy = $y2 - $y1;
+
+                    $gcd = $this->gcd(abs($dx), abs($dy));
+                    if ($gcd > 0) {
+                        $stepX = $dx / $gcd;
+                        $stepY = $dy / $gcd;
+
+                        for ($k = -10; $k <= 10; $k++) {
+                            $x = $x1 + ($k * $stepX);
+                            $y = $y1 + ($k * $stepY);
+
+                            if (is_array($this->input) &&
+                                is_array($this->input[0]) &&
+                                $x >= 0 && $x < count($this->input[0]) &&
+                                $y >= 0 && $y < count($this->input) &&
+                                $x == (int) $x && $y == (int) $y) {
+                                $antinodePositions[] = [(int) $x, (int) $y];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($n > 1) {
+                foreach ($positions as $pos) {
+                    $antinodePositions[] = $pos;
+                }
+            }
+        }
+
+        return array_unique($antinodePositions, SORT_REGULAR);
+    }
+
+    private function gcd(int $a, int $b): int
+    {
+        $a = abs($a);
+        $b = abs($b);
+        while ($b !== 0) {
+            $temp = $b;
+            $b = $a % $b;
+            $a = $temp;
+        }
+
+        return $a;
+    }
+
+    /**
+     * @param  array<int|string, array<int, array<int, int>>>  $antennas
+     * @return array<int, array<int, int>>
+     */
+    public function calculateAntinodesPart1(array $antennas): array
     {
         $antinodePositions = [];
 
@@ -97,15 +159,18 @@ class DayEight
         return $antinodePositions;
     }
 
-    public function countUniqueAntinodes(): int
+    public function countUniqueAntinodes(bool $part2 = false): int
     {
         $antennas = $this->findAntennas();
-        $antinodePositions = $this->calculateAntinodes($antennas);
+        if ($part2) {
+            $antinodePositions = $this->calculateAntinodesPart2($antennas);
+        } else {
+            $antinodePositions = $this->calculateAntinodesPart1($antennas);
+        }
 
         if (! is_array($this->input) || empty($this->input) || ! is_array($this->input[0])) {
             return 0;
         }
-
         $uniqueAntinodes = [];
         foreach ($antinodePositions as [$x, $y]) {
             if ($x >= 0 && $x < count($this->input[0]) && $y >= 0 && $y < count($this->input)) {
