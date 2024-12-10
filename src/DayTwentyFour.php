@@ -4,7 +4,7 @@ namespace AdventOfCode2024;
 
 use RuntimeException;
 
-class DayTen
+class DayTwentyFour
 {
     private string $input;
 
@@ -24,5 +24,12 @@ class DayTen
         } else {
             $this->input = $input;
         }
+
+        $this->processInput();
+    }
+
+    private function processInput(): void
+    {
+        $input = $this->input;
     }
 }

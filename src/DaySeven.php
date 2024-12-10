@@ -22,7 +22,14 @@ class DaySeven
             throw new RuntimeException('File not found');
         }
 
-        $this->input = file_get_contents($file);
+        $input = file_get_contents($file);
+
+        if ($input === false) {
+            exit('Failed to read input file');
+        }
+
+        $this->input = $input;
+
         $this->processInput();
     }
 

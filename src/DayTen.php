@@ -24,5 +24,12 @@ class DayTen
         } else {
             $this->input = $input;
         }
+
+        $this->processInput();
+    }
+
+    private function processInput(): void
+    {
+        $input = $this->input;
     }
 }
