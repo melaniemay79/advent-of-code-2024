@@ -24,7 +24,20 @@ class DayEightTest extends TestCase
         $inputProperty->setAccessible(true);
         $input = $inputProperty->getValue($dayEight);
 
-        $expected = '';
+        $expected = [
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '0', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '0', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '0', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '0', '.', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', 'A', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', 'A', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'A', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ];
 
         $this->assertEquals($expected, $input);
     }
@@ -35,5 +48,14 @@ class DayEightTest extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new DayEight('nonexistent.txt');
+    }
+
+    public function test_find_antinode_locations(): void
+    {
+        $dayEight = new DayEight($this->file);
+
+        $results = $dayEight->countUniqueAntinodes();
+
+        $this->assertEquals(14, $results);
     }
 }
