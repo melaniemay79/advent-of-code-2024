@@ -24,7 +24,7 @@ class DayNineTest extends TestCase
         $inputProperty->setAccessible(true);
         $input = $inputProperty->getValue($dayNine);
 
-        $expected = '';
+        $expected = '2333133121414131402';
 
         $this->assertEquals($expected, $input);
     }
@@ -35,5 +35,14 @@ class DayNineTest extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new DayNine('nonexistent.txt');
+    }
+
+    public function test_process_input_formats_disk_map_correctly(): void
+    {
+        $dayNine = new DayNine($this->file);
+
+        $dayNine->checkSum();
+
+        $this->assertEquals(1928, $dayNine->checkSum());
     }
 }
