@@ -6,7 +6,10 @@ use RuntimeException;
 
 class DayTen
 {
-    private string $input;
+    /**
+     * @var array<int, string>
+     */
+    private array $input;
 
     /**
      * @param  string  $file
@@ -17,19 +20,39 @@ class DayTen
             throw new RuntimeException('File not found');
         }
 
-        $input = file_get_contents($file);
+        $input = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if ($input === false) {
-            exit('Failed to read input file');
-        } else {
-            $this->input = $input;
+            throw new RuntimeException('Failed to read input file');
         }
 
-        $this->processInput();
+        $this->processInput($input);
     }
 
-    private function processInput(): void
+    /**
+     * @param  array<int, string>  $input
+     */
+    private function processInput($input): void
     {
-        $input = $this->input;
+        $this->input = $input;
+
+        $this->getTrailheads();
+    }
+
+    private function getTrailheads(): void
+    {
+        $map = $this->input;
+
+        $trailheads = [];
+
+        foreach ($this->input as $index => $string) {
+            $pos = strpos($string, '0');
+            while ($pos !== false) {
+                $trailheads[] = ['row' => $index, 'col' => $pos];
+                $pos = strpos($string, '0', $pos + 1);
+            }
+        }
+
+        dd($trailheads);
     }
 }
