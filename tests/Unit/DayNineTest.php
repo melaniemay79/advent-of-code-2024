@@ -41,8 +41,17 @@ class DayNineTest extends TestCase
     {
         $dayNine = new DayNine($this->file);
 
-        $dayNine->checkSum();
+        $sum = $dayNine->checkSum();
 
-        $this->assertEquals(1928, $dayNine->checkSum());
+        $this->assertEquals(1928, $sum);
+    }
+
+    public function test_format_disk_blocks_correctly(): void
+    {
+        $dayNine = new DayNine($this->file);
+
+        $sum = $dayNine->formatDiskBlocks();
+
+        $this->assertEquals(2858, $sum);
     }
 }

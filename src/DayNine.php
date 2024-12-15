@@ -104,13 +104,9 @@ class DayNine
         }
     }
 
-    public function checkSum(bool $wholeFiles = false): int
+    public function checkSum(): int
     {
-        if ($wholeFiles) {
-            $this->freeDiskBlocks();
-        } else {
-            $this->freeDiskSpace();
-        }
+        $this->freeDiskSpace();
 
         return array_sum(array_map(
             fn ($k, $v) => $v === '.' ? 0 : (int) $k * (int) $v,
@@ -119,142 +115,90 @@ class DayNine
         ));
     }
 
-    private function compactFiles(): void
+    public function formatDiskBlocks(): int
     {
-        $length = count($this->diskMap);
-        $fileSizes = [];
-        $currentFileId = -1;
+        $input = $this->input;
+        $input = str_split($input);
 
-        // Step 1: Identify files and their sizes
-        for ($i = 0; $i < $length; $i++) {
-            if (is_numeric($this->diskMap[$i])) {
-                if ($currentFileId == -1 || $this->diskMap[$i] != $currentFileId) {
-                    $currentFileId = $this->diskMap[$i];
-                    $fileSizes[$currentFileId] = 0; // Initialize size for this file ID
-                }
-                $fileSizes[$currentFileId]++;
+        $n = 0;
+
+        foreach ($input as $k => $v) {
+            if ($k % 2 === 0) {
+                $disk[] = [
+                    'id' => $n,
+                    'size' => (int) $v,
+                ];
+                $n++;
             } else {
-                $currentFileId = -1; // Reset on dot
-            }
-        }
-
-        // Step 2: Move files in order of decreasing file ID
-        krsort($fileSizes); // Sort file sizes in descending order of file ID
-
-        foreach ($fileSizes as $fileId => $size) {
-            // Step 3: Find a span of free space large enough to fit the file
-            $freeSpaceStart = -1;
-            $freeSpaceLength = 0;
-
-            for ($i = 0; $i < $length; $i++) {
-                if ($this->diskMap[$i] === '.') {
-                    if ($freeSpaceStart === -1) {
-                        $freeSpaceStart = $i; // Start of free space
-                    }
-                    $freeSpaceLength++;
-                } else {
-                    // If we hit a file, check if we have enough space
-                    if ($freeSpaceLength >= $size) {
-                        // Move the file to the leftmost free space
-                        $this->moveFileToFreeSpace($fileId, $size, $freeSpaceStart);
-                        break; // Move to the next file
-                    }
-                    // Reset free space tracking
-                    $freeSpaceStart = -1;
-                    $freeSpaceLength = 0;
+                if ($v === '0') {
+                    continue;
                 }
-            }
 
-            // Final check at the end of the disk
-            if ($freeSpaceLength >= $size) {
-                $this->moveFileToFreeSpace($fileId, $size, $freeSpaceStart);
-            }
-        }
-    }
-
-    private function moveFileToFreeSpace(int $fileId, int $size, int $freeSpaceStart): void
-    {
-        // Step 4: Move the file to the leftmost free space
-        $length = count($this->diskMap);
-        $fileEnd = $freeSpaceStart + $size;
-
-        // Move the file ID into the free space
-        for ($i = 0; $i < $size; $i++) {
-            $this->diskMap[$freeSpaceStart + $i] = (string) $fileId;
-        }
-
-        // Clear the original file space
-        for ($i = 0; $i < $size; $i++) {
-            if ($fileEnd + $i < $length) {
-                $this->diskMap[$fileEnd + $i] = '.'; // Clear the original space
-            }
-        }
-    }
-
-    private function freeDiskBlocks(): void
-    {
-        $length = count($this->diskMap);
-        $rightmostNumPos = -1;
-
-        for ($i = 0; $i < $length; $i++) {
-            if (is_numeric($this->diskMap[$i])) {
-                $rightmostNumPos = $i;
+                $disk[] = [
+                    'id' => null,
+                    'size' => (int) $v,
+                ];
             }
         }
 
-        while ($rightmostNumPos > 0) {
-            $rightmostValue = $this->diskMap[$rightmostNumPos];
-            $count = 0;
+        $z = array_key_last($disk);
 
-            // Count how many of the rightmost value there are
-            for ($i = $rightmostNumPos; $i >= 0; $i--) {
-                if ($this->diskMap[$i] == $rightmostValue) {
-                    $count++;
-                } else {
+        while ($z > 0) {
+            for ($a = 0; $a < $z; $a++) {
+                if ($disk[$a]['id'] === null) {
+                    $space = (int) $disk[$a]['size'] - (int) $disk[$z]['size'];
+                    if ($space < 0) {
+                        $a++;
+
+                        continue;
+                    } else {
+                        $replace = $disk[$z];
+                        $disk[$z]['id'] = null;
+                        if ($space > 0) {
+                            $space = [
+                                $replace,
+                                [
+                                    'id' => null,
+                                    'size' => $space,
+                                ],
+                            ];
+                            $z++;
+                        } else {
+                            $space = [$replace];
+                        }
+                        $disk = array_merge(
+                            array_slice($disk, 0, $a),
+                            $space,
+                            array_slice($disk, $a + 1)
+                        );
+                    }
                     break;
                 }
             }
 
-            $leftmostDotPos = -1;
-            $space = 0;
-            for ($i = 0; $i < $rightmostNumPos; $i++) {
-                for ($j = 0; $j < $count; $j++) {
-                    if ($this->diskMap[$i + $j] !== '.') {
-                        break;
-                    }
-                    $space++;
-                }
-
-                if ($this->diskMap[$i] === '.' && $space >= $count) {
-                    $leftmostDotPos = $i;
-                    break;
-                }
-            }
-
-            dump('space: '.$space, 'count: '.$count);
-            if ($space < $count) {
-                $rightmostNumPos = $rightmostNumPos - $count;
-                break;
-            }
-
-            dump(implode('', $this->diskMap), $rightmostNumPos, $leftmostDotPos);
-
-            if ($leftmostDotPos !== -1 && $leftmostDotPos < $rightmostNumPos) {
-                for ($i = 0; $i < $count; $i++) {
-                    $this->diskMap[$leftmostDotPos + $i] = $this->diskMap[$rightmostNumPos - $i];
-                    $this->diskMap[$rightmostNumPos - $i] = '.';
-                }
-
-                $rightmostNumPos--;
-                while ($rightmostNumPos >= 0 && ! is_numeric($this->diskMap[$rightmostNumPos])) {
-                    $rightmostNumPos--;
-                }
-            } else {
-                break;
-            }
-            $rightmostNumPos = $rightmostNumPos - $count;
-            dump('rightmostNumPos: '.$this->diskMap[$rightmostNumPos], 'count: '.$count);
-            dump(implode('', $this->diskMap), $rightmostNumPos, $leftmostDotPos);
+            $z--;
         }
+
+        $sum = 0;
+
+        $diskStr = '';
+        foreach ($disk as $k => $v) {
+            for ($i = 0; $i < $v['size']; $i++) {
+                if ($v['id'] === null) {
+                    $output = '.';
+                } else {
+                    $output = $v['id'];
+                }
+                $diskStr .= $output;
+            }
+        }
+
+        $sum = array_sum(array_map(
+            fn ($k, $v) => $v === '.' ? 0 : (int) $k * (int) $v,
+            array_keys(str_split($diskStr)),
+            str_split($diskStr)
+        ));
+
+        return $sum;
     }
 }

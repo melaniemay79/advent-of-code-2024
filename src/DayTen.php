@@ -55,4 +55,11 @@ class DayTen
 
         dd($trailheads);
     }
+
+    private function evaluateTrails(int $row, int $col): void
+    {
+        $map = $this->input;
+
+        $trailheads = [];
+    }
 }
