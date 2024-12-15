@@ -7,9 +7,11 @@ use RuntimeException;
 class Day10
 {
     /**
-     * @var array<int, string>
+     * @var array<int, array<int, string>>
      */
     private array $input;
+
+    private int $totalScore = 0;
 
     /**
      * @param  string  $file
@@ -34,32 +36,64 @@ class Day10
      */
     private function processInput($input): void
     {
-        $this->input = $input;
-
-        $this->getTrailheads();
+        foreach ($input as $row) {
+            $this->input[] = str_split($row);
+        }
     }
 
-    private function getTrailheads(): void
+    public function calculateTrailheadScores(): int
     {
-        $map = $this->input;
+        $rows = count($this->input);
+        $cols = count($this->input[0]);
 
-        $trailheads = [];
-
-        foreach ($this->input as $index => $string) {
-            $pos = strpos($string, '0');
-            while ($pos !== false) {
-                $trailheads[] = ['row' => $index, 'col' => $pos];
-                $pos = strpos($string, '0', $pos + 1);
+        for ($row = 0; $row < $rows; $row++) {
+            for ($col = 0; $col < $cols; $col++) {
+                if ($this->input[$row][$col] === '0') {
+                    $this->totalScore += $this->countNinesFromTrailhead($row, $col);
+                }
             }
         }
 
-        dd($trailheads);
+        return $this->totalScore;
     }
 
-    private function evaluateTrails(int $row, int $col): void
+    private function countNinesFromTrailhead(int $startRow, int $startCol): int
     {
-        $map = $this->input;
+        $visited = [];
+        $stack = [[$startRow, $startCol]];
+        $countNines = 0;
 
-        $trailheads = [];
+        while (! empty($stack)) {
+            [$row, $col] = array_pop($stack);
+
+            if ($this->input[$row][$col] === '9') {
+                $countNines++;
+            }
+
+            $visited["$row,$col"] = true;
+
+            foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$dRow, $dCol]) {
+                $newRow = $row + $dRow;
+                $newCol = $col + $dCol;
+
+                if ($this->isValidPosition($newRow, $newCol, $visited, $this->input[$row][$col])) {
+                    $stack[] = [$newRow, $newCol];
+                }
+            }
+        }
+
+        return $countNines;
+    }
+
+    private function isValidPosition(int $row, int $col, array $visited, string $currentHeight): bool
+    {
+        if ($row < 0 || $row >= count($this->input) || $col < 0 || $col >= count($this->input[0])) {
+            return false;
+        }
+        if (isset($visited["$row,$col"])) {
+            return false;
+        }
+
+        return (int) $this->input[$row][$col] === (int) $currentHeight + 1;
     }
 }

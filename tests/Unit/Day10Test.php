@@ -46,10 +46,12 @@ class Day10Test extends TestCase
         new Day10('nonexistent.txt');
     }
 
-    public function test_get_trailheads_returns_correct_trailheads(): void
+    public function test_calculate_trailhead_scores_returns_correct_score(): void
     {
         $dayTen = new Day10($this->file);
 
-        $this->assertEquals([0, 1, 2, 3, 4, 5, 6, 7], $dayTen->getTrailheads());
+        $totalScore = $dayTen->calculateTrailheadScores();
+
+        $this->assertEquals(36, $totalScore);
     }
 }
