@@ -24,7 +24,7 @@ class Day11Test extends TestCase
         $inputProperty->setAccessible(true);
         $input = $inputProperty->getValue($dayEleven);
 
-        $expected = '';
+        $expected = '125 17';
 
         $this->assertEquals($expected, $input);
     }
@@ -35,5 +35,14 @@ class Day11Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day11('nonexistent.txt');
+    }
+
+    public function test_25_blinks_returns_correct_result(): void
+    {
+        $dayEleven = new Day11($this->file);
+
+        $result = $dayEleven->simulateBlinks(25);
+
+        $this->assertEquals(55312, $result);
     }
 }
