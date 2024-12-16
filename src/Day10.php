@@ -110,10 +110,8 @@ class Day10
      */
     private function findPaths(int $row, int $col, array $path): int
     {
-        // Add current position to path
         $path[] = "$row,$col";
 
-        // If we reached a 9, we found a valid path
         if ($this->input[$row][$col] === '9') {
             return 1;
         }
@@ -121,12 +119,10 @@ class Day10
         $paths = 0;
         $currentHeight = (int) $this->input[$row][$col];
 
-        // Try all four directions
         foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$dRow, $dCol]) {
             $newRow = $row + $dRow;
             $newCol = $col + $dCol;
 
-            // Check if the new position is valid and hasn't been visited in current path
             if ($this->isValidNextPosition($newRow, $newCol, $currentHeight) &&
                 ! in_array("$newRow,$newCol", $path)) {
                 $paths += $this->findPaths($newRow, $newCol, $path);
@@ -149,21 +145,21 @@ class Day10
     {
         $rows = count($this->input);
         $cols = count($this->input[0]);
-        $totalRatings = 0; // Initialize total ratings
+        $totalRatings = 0;
 
         for ($row = 0; $row < $rows; $row++) {
             for ($col = 0; $col < $cols; $col++) {
                 if ($this->input[$row][$col] === '0') {
-                    $totalRatings += $this->countDistinctTrails($row, $col); // Count distinct trails
+                    $totalRatings += $this->countDistinctTrails($row, $col);
                 }
             }
         }
 
-        return $totalRatings; // Return total ratings instead of total score
+        return $totalRatings;
     }
 
     public function getTotalTrailheadRatings(): int
     {
-        return $this->calculateTrailheadRatings(); // Call the updated method
+        return $this->calculateTrailheadRatings();
     }
 }
