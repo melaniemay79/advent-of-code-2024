@@ -8,6 +8,9 @@ class Day11
 {
     private string $input;
 
+    /**
+     * @var array<int>
+     */
     private array $stones;
 
     /**
@@ -32,7 +35,7 @@ class Day11
 
     private function processInput(): void
     {
-        $this->stones = array_map('intval', preg_split('/\s+/', trim($this->input)));
+        $this->stones = array_map('intval', preg_split('/\s+/', trim($this->input)) ?: []);
     }
 
     public function simulateBlinks(int $blinks): int
@@ -48,7 +51,7 @@ class Day11
                     $newStoneCounts[1] = ($newStoneCounts[1] ?? 0) + $count;
                 } elseif ($this->hasEvenDigits($stone)) {
                     $digits = strlen((string) $stone);
-                    $half = $digits / 2;
+                    $half = (int) ($digits / 2);
                     $left = (int) substr((string) $stone, 0, $half);
                     $right = (int) substr((string) $stone, $half);
                     $newStoneCounts[$left] = ($newStoneCounts[$left] ?? 0) + $count;
