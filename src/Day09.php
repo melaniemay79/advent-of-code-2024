@@ -119,6 +119,7 @@ class Day09
     {
         $input = $this->input;
         $input = str_split($input);
+        $disk = [];
 
         $n = 0;
 

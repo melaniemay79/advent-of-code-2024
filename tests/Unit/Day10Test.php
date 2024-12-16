@@ -54,4 +54,12 @@ class Day10Test extends TestCase
 
         $this->assertEquals(36, $totalScore);
     }
+
+    public function test_get_total_trailhead_ratings_returns_correct_score(): void
+    {
+        $dayTen = new Day10($this->file);
+
+        $totalScore = $dayTen->getTotalTrailheadRatings();
+        $this->assertEquals(81, $totalScore);
+    }
 }
