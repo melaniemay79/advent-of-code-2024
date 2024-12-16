@@ -20,13 +20,24 @@ class Day12Test extends TestCase
         $dayTwelve = new Day12($this->file);
 
         $reflection = new \ReflectionClass($dayTwelve);
-        $inputProperty = $reflection->getProperty('input');
-        $inputProperty->setAccessible(true);
-        $input = $inputProperty->getValue($dayTwelve);
+        $mapProperty = $reflection->getProperty('map');
+        $mapProperty->setAccessible(true);
+        $map = $mapProperty->getValue($dayTwelve);
 
-        $expected = '';
+        $expected = [
+            'RRRRIICCFF',
+            'RRRRIICCCF',
+            'VVRRRCCFFF',
+            'VVRCCCJFFF',
+            'VVVVCJJCFE',
+            'VVIVCCJJEE',
+            'VVIIICJJEE',
+            'MIIIIIJJEE',
+            'MIIISIJEEE',
+            'MMMISSJEEE',
+        ];
 
-        $this->assertEquals($expected, $input);
+        $this->assertEquals($expected, $map);
     }
 
     public function test_constructor_throws_exception_if_file_is_not_found(): void
@@ -35,5 +46,14 @@ class Day12Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day12('nonexistent.txt');
+    }
+
+    public function test_calculate_total_price_returns_correct_result(): void
+    {
+        $dayTwelve = new Day12($this->file);
+
+        $result = $dayTwelve->calculateTotalPrice();
+
+        $this->assertEquals(1930, $result);
     }
 }
