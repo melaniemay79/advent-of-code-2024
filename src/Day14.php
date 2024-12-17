@@ -62,30 +62,20 @@ class Day14
 
     public function simulate(int $seconds): int
     {
-        for ($i = 0; $i < $seconds; $i++) {
-            foreach ($this->robots as &$robot) {
-                $newX = $robot['position'][0] + $robot['velocity'][0];
-                $newY = $robot['position'][1] + $robot['velocity'][1];
+        foreach ($this->robots as &$robot) {
+            $newX = $robot['position'][0] + ($seconds * $robot['velocity'][0]);
+            $newY = $robot['position'][1] + ($seconds * $robot['velocity'][1]);
 
-                while ($newX < 0) {
-                    $newX += $this->width;
-                }
-                while ($newX >= $this->width) {
-                    $newX -= $this->width;
-                }
-                while ($newY < 0) {
-                    $newY += $this->height;
-                }
-                while ($newY >= $this->height) {
-                    $newY -= $this->height;
-                }
-
-                $robot['position'][0] = $newX;
-                $robot['position'][1] = $newY;
-            }
+            $robot['position'][0] = $this->safeModulo($this->safeModulo($newX, $this->width) + $this->width, $this->width);
+            $robot['position'][1] = $this->safeModulo($this->safeModulo($newY, $this->height) + $this->height, $this->height);
         }
 
         return $this->calculateSafetyFactor();
+    }
+
+    private function safeModulo(int $n, int $m): int
+    {
+        return (($n % $m) + $m) % $m;
     }
 
     private function calculateSafetyFactor(): int
@@ -110,5 +100,58 @@ class Day14
         }
 
         return (int) array_product($quadrants);
+    }
+
+    /**
+     * @return array{0: int, 1: string}
+     */
+    public function findChristmasTree(): array
+    {
+        $seconds = 0;
+
+        while ($seconds < 10000) {
+            $seconds++;
+
+            $grid = array_fill(0, $this->height, array_fill(0, $this->width, 0));
+
+            $hasOverlap = false;
+
+            foreach ($this->robots as $robot) {
+                $px = $robot['position'][0];
+                $py = $robot['position'][1];
+                $vx = $robot['velocity'][0];
+                $vy = $robot['velocity'][1];
+
+                $nx = ($px + $seconds * $vx) % $this->width;
+                $ny = ($py + $seconds * $vy) % $this->height;
+
+                if ($nx < 0) {
+                    $nx += $this->width;
+                }
+                if ($ny < 0) {
+                    $ny += $this->height;
+                }
+
+                $grid[$ny][$nx]++;
+
+                if ($grid[$ny][$nx] > 1) {
+                    $hasOverlap = true;
+                    break;
+                }
+            }
+
+            if (! $hasOverlap) {
+                $christmasTree = '';
+                foreach ($grid as $row) {
+                    $christmasTree .= implode('', array_map(function ($cell) {
+                        return $cell === 1 ? '*' : '.';
+                    }, $row))."\n";
+                }
+
+                return [$seconds, $christmasTree];
+            }
+        }
+
+        return [-1, ''];
     }
 }
