@@ -54,7 +54,14 @@ class Day17
         $output = [];
         $instructionPointer = 0;
 
-        while ($instructionPointer < count($this->program) - 1) {
+        $originalA = $this->registerA;
+
+        while ($instructionPointer < count($this->program)) {
+            // Break if we're at the last instruction and can't read an operand
+            if ($instructionPointer === count($this->program) - 1) {
+                break;
+            }
+
             $opcode = $this->program[$instructionPointer];
             $operand = $this->program[$instructionPointer + 1];
 
@@ -112,5 +119,27 @@ class Day17
             6 => $this->registerC,
             default => throw new RuntimeException('Invalid combo operand: '.$operand),
         };
+    }
+
+    public function findSelfReplicatingValue(): int
+    {
+        $targetProgram = implode(',', $this->program);
+        $initialA = 1;
+
+        while ($initialA <= 200000) {
+            $this->registerA = $initialA;
+            $this->registerB = 0;
+            $this->registerC = 0;
+
+            $output = $this->execute();
+
+            if ($output === $targetProgram) {
+                return $initialA;
+            }
+
+            $initialA++;
+        }
+
+        throw new RuntimeException('No solution found within reasonable limits');
     }
 }

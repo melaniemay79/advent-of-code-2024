@@ -10,9 +10,12 @@ class Day17Test extends TestCase
 {
     private string $file;
 
+    private string $file2;
+
     protected function setUp(): void
     {
         $this->file = __DIR__.'/../data/input_17.txt';
+        $this->file2 = __DIR__.'/../data/input_17_pt_2.txt';
     }
 
     public function test_constructor_processes_input_correctly(): void
@@ -50,9 +53,15 @@ class Day17Test extends TestCase
         new Day17('nonexistent.txt');
     }
 
-    public function test_executve_method_returns_correct_output(): void
+    public function test_execute_method_returns_correct_output(): void
     {
         $daySeventeen = new Day17($this->file);
         $this->assertEquals('4,6,3,5,6,3,5,2,1,0', $daySeventeen->execute());
+    }
+
+    public function test_find_self_replicating_value_method_returns_correct_output(): void
+    {
+        $daySeventeen = new Day17($this->file2);
+        $this->assertEquals(117440, $daySeventeen->findSelfReplicatingValue());
     }
 }
