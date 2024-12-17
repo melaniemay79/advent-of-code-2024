@@ -79,6 +79,12 @@ v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^';
     public function test_solve_part1_returns_correct_result(): void
     {
         $dayFifteen = new Day15($this->file);
-        $this->assertEquals(10092, $dayFifteen->solvePart1());
+        $this->assertEquals(10092, $dayFifteen->solve());
+    }
+
+    public function test_solve_part2_returns_correct_result(): void
+    {
+        $dayFifteen = new Day15($this->file);
+        $this->assertEquals(9021, $dayFifteen->solve(true));
     }
 }
