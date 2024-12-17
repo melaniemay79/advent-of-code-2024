@@ -20,13 +20,26 @@ class Day17Test extends TestCase
         $daySeventeen = new Day17($this->file);
 
         $reflection = new \ReflectionClass($daySeventeen);
-        $inputProperty = $reflection->getProperty('input');
-        $inputProperty->setAccessible(true);
-        $input = $inputProperty->getValue($daySeventeen);
+        $registerAProperty = $reflection->getProperty('registerA');
+        $registerAProperty->setAccessible(true);
+        $registerA = $registerAProperty->getValue($daySeventeen);
 
-        $expected = '';
+        $registerBProperty = $reflection->getProperty('registerB');
+        $registerBProperty->setAccessible(true);
+        $registerB = $registerBProperty->getValue($daySeventeen);
 
-        $this->assertEquals($expected, $input);
+        $registerCProperty = $reflection->getProperty('registerC');
+        $registerCProperty->setAccessible(true);
+        $registerC = $registerCProperty->getValue($daySeventeen);
+
+        $programProperty = $reflection->getProperty('program');
+        $programProperty->setAccessible(true);
+        $program = $programProperty->getValue($daySeventeen);
+
+        $this->assertEquals(729, $registerA);
+        $this->assertEquals(0, $registerB);
+        $this->assertEquals(0, $registerC);
+        $this->assertEquals([0, 1, 5, 4, 3, 0], $program);
     }
 
     public function test_constructor_throws_exception_if_file_is_not_found(): void
@@ -35,5 +48,11 @@ class Day17Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day17('nonexistent.txt');
+    }
+
+    public function test_executve_method_returns_correct_output(): void
+    {
+        $daySeventeen = new Day17($this->file);
+        $this->assertEquals('4,6,3,5,6,3,5,2,1,0', $daySeventeen->execute());
     }
 }
