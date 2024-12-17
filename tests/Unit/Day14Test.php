@@ -24,7 +24,18 @@ class Day14Test extends TestCase
         $inputProperty->setAccessible(true);
         $input = $inputProperty->getValue($dayFourteen);
 
-        $expected = '';
+        $expected = 'p=0,4 v=3,-3
+p=6,3 v=-1,-3
+p=10,3 v=-1,2
+p=2,0 v=2,-1
+p=0,0 v=1,3
+p=3,0 v=-2,-2
+p=7,6 v=-1,-3
+p=3,0 v=-1,-2
+p=9,3 v=2,3
+p=7,3 v=-1,2
+p=2,4 v=2,-3
+p=9,5 v=-3,-3';
 
         $this->assertEquals($expected, $input);
     }
@@ -35,5 +46,14 @@ class Day14Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day14('nonexistent.txt');
+    }
+
+    public function test_solve_part_one_returns_correct_result(): void
+    {
+        $dayFourteen = new Day14($this->file);
+
+        $result = $dayFourteen->simulate(100);
+
+        $this->assertEquals(12, $result);
     }
 }
