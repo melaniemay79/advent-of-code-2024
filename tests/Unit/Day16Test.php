@@ -24,7 +24,21 @@ class Day16Test extends TestCase
         $inputProperty->setAccessible(true);
         $input = $inputProperty->getValue($daySixteen);
 
-        $expected = '';
+        $expected = '###############
+#.......#....E#
+#.#.###.#.###.#
+#.....#.#...#.#
+#.###.#####.#.#
+#.#.#.......#.#
+#.#.#####.###.#
+#...........#.#
+###.#.#####.#.#
+#...#.....#.#.#
+#.#.#.###.#.#.#
+#.....#...#.#.#
+#.###.#.#.#.#.#
+#S..#.....#...#
+###############';
 
         $this->assertEquals($expected, $input);
     }
@@ -35,5 +49,11 @@ class Day16Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day16('nonexistent.txt');
+    }
+
+    public function test_solve_max_returns_correct_result(): void
+    {
+        $daySixteen = new Day16($this->file);
+        $this->assertEquals(11048, $daySixteen->solve());
     }
 }
