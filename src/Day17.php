@@ -54,8 +54,6 @@ class Day17
         $output = [];
         $instructionPointer = 0;
 
-        $originalA = $this->registerA;
-
         while ($instructionPointer < count($this->program)) {
             // Break if we're at the last instruction and can't read an operand
             if ($instructionPointer === count($this->program) - 1) {
@@ -126,7 +124,7 @@ class Day17
         $targetProgram = implode(',', $this->program);
         $initialA = 1;
 
-        while ($initialA <= 200000) {
+        while ($initialA <= PHP_INT_MAX) {
             $this->registerA = $initialA;
             $this->registerB = 0;
             $this->registerC = 0;
@@ -137,9 +135,15 @@ class Day17
                 return $initialA;
             }
 
-            $initialA++;
+            // Use larger increments initially, then refine when we get closer
+            if ($initialA < 1000000000) {
+                $initialA++;
+            } elseif ($initialA < 10000000000) {
+                $initialA += 10;
+            } else {
+                $initialA += 1000000000;
+            }
         }
-
         throw new RuntimeException('No solution found within reasonable limits');
     }
 }
