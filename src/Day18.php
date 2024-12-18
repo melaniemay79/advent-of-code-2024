@@ -128,4 +128,58 @@ class Day18
 
         return -1;
     }
+
+    public function findBlockingByte(): string
+    {
+        for ($i = 0; $i < count($this->bytes); $i++) {
+            $byte = $this->bytes[$i];
+            $x = intval($byte[0]);
+            $y = intval($byte[1]);
+
+            if ($x >= 0 && $x < $this->gridSize &&
+                $y >= 0 && $y < $this->gridSize) {
+                $this->grid[$x][$y] = '#';
+            }
+
+            if (! $this->isPathPossible()) {
+                return "$x,$y";
+            }
+        }
+
+        return '';
+    }
+
+    private function isPathPossible(): bool
+    {
+        $queue = new SplPriorityQueue;
+        $visited = array_fill(0, $this->gridSize, array_fill(0, $this->gridSize, false));
+        $directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+        $queue->insert([0, 0], 0);
+
+        while (! $queue->isEmpty()) {
+            $current = (array) $queue->extract();
+            [$x, $y] = $current;
+
+            if ($x === $this->gridSize - 1 && $y === $this->gridSize - 1) {
+                return true;
+            }
+
+            foreach ($directions as [$dx, $dy]) {
+                $newX = $x + $dx;
+                $newY = $y + $dy;
+
+                if ($newX >= 0 && $newX < $this->gridSize &&
+                    $newY >= 0 && $newY < $this->gridSize &&
+                    ! $visited[$newY][$newX] &&
+                    $this->grid[$newY][$newX] === '.') {
+
+                    $visited[$newY][$newX] = true;
+                    $queue->insert([$newX, $newY], 0);
+                }
+            }
+        }
+
+        return false;
+    }
 }

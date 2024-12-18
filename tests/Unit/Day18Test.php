@@ -90,4 +90,13 @@ class Day18Test extends TestCase
 
         $this->assertEquals(22, $dayEighteen->findShortestPath());
     }
+
+    public function test_find_blocking_byte_returns_correct_value(): void
+    {
+        $gridSize = 7;
+        $maxBytes = 12;
+        $dayEighteen = new Day18($this->file, $gridSize, $maxBytes);
+
+        $this->assertEquals('2,5', $dayEighteen->findBlockingByte());
+    }
 }
