@@ -20,13 +20,17 @@ class Day19Test extends TestCase
         $dayNineteen = new Day19($this->file);
 
         $reflection = new \ReflectionClass($dayNineteen);
-        $inputProperty = $reflection->getProperty('input');
-        $inputProperty->setAccessible(true);
-        $input = $inputProperty->getValue($dayNineteen);
+        $patternsProperty = $reflection->getProperty('patterns');
+        $patternsProperty->setAccessible(true);
+        $patterns = $patternsProperty->getValue($dayNineteen);
+        $expectedPatterns = ['r', 'wr', 'b', 'g', 'bwu', 'rb', 'gb', 'br'];
+        $this->assertEquals($expectedPatterns, $patterns);
 
-        $expected = '';
-
-        $this->assertEquals($expected, $input);
+        $designsProperty = $reflection->getProperty('designs');
+        $designsProperty->setAccessible(true);
+        $designs = $designsProperty->getValue($dayNineteen);
+        $expectedDesigns = ['brwrr', 'bggr', 'gbbr', 'rrbgbr', 'ubwu', 'bwurrg', 'brgr', 'bbrgwb'];
+        $this->assertEquals($expectedDesigns, $designs);
     }
 
     public function test_constructor_throws_exception_if_file_is_not_found(): void
@@ -35,5 +39,17 @@ class Day19Test extends TestCase
         $this->expectExceptionMessage('File not found');
 
         new Day19('nonexistent.txt');
+    }
+
+    public function test_solve_part_one_returns_correct_result(): void
+    {
+        $dayNineteen = new Day19($this->file);
+        $this->assertEquals(6, $dayNineteen->solvePart1());
+    }
+
+    public function test_solve_part_two_returns_correct_result(): void
+    {
+        $dayNineteen = new Day19($this->file);
+        $this->assertEquals(16, $dayNineteen->solvePart2());
     }
 }
