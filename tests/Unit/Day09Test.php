@@ -46,12 +46,12 @@ class Day09Test extends TestCase
         $this->assertEquals(1928, $sum);
     }
 
-    public function test_format_disk_blocks_correctly(): void
+    public function test_calculate_checksum_returns_correct_result(): void
     {
-        $dayNine = new Day09($this->file);
+        $dayTwelve = new Day09($this->file);
 
-        $sum = $dayNine->formatDiskBlocks();
+        $result = $dayTwelve->calculateChecksum();
 
-        $this->assertEquals(2858, $sum);
+        $this->assertEquals(2858, $result);
     }
 }

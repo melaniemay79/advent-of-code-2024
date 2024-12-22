@@ -9,7 +9,7 @@ class Day09
     private string $input;
 
     /**
-     * @var array<int, string>
+     * @var array<int, int|string>
      */
     private array $diskMap;
 
@@ -115,91 +115,84 @@ class Day09
         ));
     }
 
-    public function formatDiskBlocks(): int
+    private function processDiskMap(string $input): void
     {
-        $input = $this->input;
-        $input = str_split($input);
-        $disk = [];
+        $this->diskMap = [];
+        $id = 0;
 
-        $n = 0;
-
-        foreach ($input as $k => $v) {
-            if ($k % 2 === 0) {
-                $disk[] = [
-                    'id' => $n,
-                    'size' => (int) $v,
-                ];
-                $n++;
-            } else {
-                if ($v === '0') {
-                    continue;
+        for ($i = 1; $i <= strlen($input); $i++) {
+            $value = intval($input[$i - 1]);
+            for ($j = 0; $j < $value; $j++) {
+                if ($i % 2 == 0) {
+                    $this->diskMap[] = -1;
+                } else {
+                    $this->diskMap[] = $id;
                 }
-
-                $disk[] = [
-                    'id' => null,
-                    'size' => (int) $v,
-                ];
+            }
+            if ($i % 2 != 0) {
+                $id++;
             }
         }
+    }
 
-        $z = array_key_last($disk);
+    public function calculateChecksum(): int
+    {
+        $this->processDiskMap($this->input);
+        $diskMap = $this->diskMap;
+        $id = count(array_unique(array_filter($diskMap, fn ($x) => $x >= 0))) - 1;
+        $maxIdIdx = count($diskMap);
 
-        while ($z > 0) {
-            for ($a = 0; $a < $z; $a++) {
-                if ($disk[$a]['id'] === null) {
-                    $space = (int) $disk[$a]['size'] - (int) $disk[$z]['size'];
-                    if ($space < 0) {
-                        $a++;
+        while ($id >= 0) {
+            while ($diskMap[$maxIdIdx - 1] != $id) {
+                $maxIdIdx--;
+            }
 
-                        continue;
-                    } else {
-                        $replace = $disk[$z];
-                        $disk[$z]['id'] = null;
-                        if ($space > 0) {
-                            $space = [
-                                $replace,
-                                [
-                                    'id' => null,
-                                    'size' => $space,
-                                ],
-                            ];
-                            $z++;
-                        } else {
-                            $space = [$replace];
-                        }
-                        $disk = array_merge(
-                            array_slice($disk, 0, $a),
-                            $space,
-                            array_slice($disk, $a + 1)
-                        );
-                    }
+            $minIdIdx = $maxIdIdx - 1;
+            while ($minIdIdx > 0 && $diskMap[$minIdIdx - 1] == $id) {
+                $minIdIdx--;
+            }
+            $idSize = $maxIdIdx - $minIdIdx;
+
+            $minEmptySlotIdx = 0;
+            while (true) {
+                while ($minEmptySlotIdx < count($diskMap) && $diskMap[$minEmptySlotIdx] != -1) {
+                    $minEmptySlotIdx++;
+                }
+
+                $maxEmptySlotIdx = $minEmptySlotIdx + 1;
+                while ($maxEmptySlotIdx < count($diskMap) && $diskMap[$maxEmptySlotIdx] == -1) {
+                    $maxEmptySlotIdx++;
+                }
+                $emptySlotSize = $maxEmptySlotIdx - $minEmptySlotIdx;
+
+                if ($emptySlotSize >= $idSize) {
+                    break;
+                }
+                $minEmptySlotIdx += $emptySlotSize;
+                if ($minEmptySlotIdx >= $minIdIdx) {
                     break;
                 }
             }
 
-            $z--;
-        }
-
-        $sum = 0;
-
-        $diskStr = '';
-        foreach ($disk as $k => $v) {
-            for ($i = 0; $i < $v['size']; $i++) {
-                if ($v['id'] === null) {
-                    $output = '.';
-                } else {
-                    $output = $v['id'];
+            if ($minEmptySlotIdx < $minIdIdx) {
+                for ($i = 0; $i < $idSize; $i++) {
+                    $diskMap[$minEmptySlotIdx + $i] = $id;
                 }
-                $diskStr .= $output;
+                for ($i = $minIdIdx; $i < $maxIdIdx; $i++) {
+                    $diskMap[$i] = -1;
+                }
             }
+
+            $id--;
         }
 
-        $sum = array_sum(array_map(
-            fn ($k, $v) => $v === '.' ? 0 : (int) $k * (int) $v,
-            array_keys(str_split($diskStr)),
-            str_split($diskStr)
-        ));
+        $diskMap = array_map(fn ($x) => $x == -1 ? 0 : $x, $diskMap);
 
-        return $sum;
+        $checksum = 0;
+        foreach ($diskMap as $i => $v) {
+            $checksum += (int) $i * (int) $v;
+        }
+
+        return $checksum;
     }
 }
