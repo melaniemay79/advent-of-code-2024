@@ -59,4 +59,13 @@ Prize: X=18641, Y=10279';
 
         $this->assertEquals(480, $result);
     }
+
+    public function test_solve_part_two_returns_correct_result(): void
+    {
+        $dayThirteen = new Day13($this->file);
+
+        $result = $dayThirteen->solvePart2();
+
+        $this->assertEquals('875318608908', $result);
+    }
 }

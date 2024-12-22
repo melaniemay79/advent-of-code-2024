@@ -109,4 +109,57 @@ class Day13
 
         return null;
     }
+
+    public function solvePart2(): string
+    {
+        $correction = '10000000000000';
+        $totalTokens = '0';
+
+        foreach ($this->machines as $machine) {
+            $result = $this->solveForMachinePart2($machine, $correction);
+            if ($result !== null) {
+                $totalTokens = bcadd($totalTokens, $result);
+            }
+        }
+
+        return $totalTokens;
+    }
+
+    /**
+     * @param  array<string, array<string, int>>  $machine
+     */
+    private function solveForMachinePart2(array $machine, string $correction): ?string
+    {
+        $a11 = (string) $machine['buttonA']['x'];
+        $a12 = (string) $machine['buttonB']['x'];
+        $a21 = (string) $machine['buttonA']['y'];
+        $a22 = (string) $machine['buttonB']['y'];
+
+        $b1 = bcadd((string) $machine['prize']['x'], $correction);
+        $b2 = bcadd((string) $machine['prize']['y'], $correction);
+
+        $detA = bcsub(bcmul($a11, $a22), bcmul($a12, $a21));
+
+        if ($detA === '0') {
+            return null;
+        }
+
+        $detX = bcsub(bcmul($b1, $a22), bcmul($a12, $b2));
+        $detY = bcsub(bcmul($a11, $b2), bcmul($b1, $a21));
+
+        $a = bcdiv($detX, $detA, 0);
+        $b = bcdiv($detY, $detA, 0);
+
+        $x = bcadd(bcmul($a, $a11), bcmul($b, $a12));
+        $y = bcadd(bcmul($a, $a21), bcmul($b, $a22));
+
+        $expectedX = bcadd((string) $machine['prize']['x'], $correction);
+        $expectedY = bcadd((string) $machine['prize']['y'], $correction);
+
+        if (bccomp($x, $expectedX) === 0 && bccomp($y, $expectedY) === 0) {
+            return bcadd(bcmul('3', $a), $b);
+        }
+
+        return null;
+    }
 }
