@@ -54,6 +54,12 @@ class Day16Test extends TestCase
     public function test_solve_max_returns_correct_result(): void
     {
         $daySixteen = new Day16($this->file);
-        $this->assertEquals(11048, $daySixteen->solve());
+        $this->assertEquals(11048, $daySixteen->solve()['part1']);
+    }
+
+    public function test_solve_part2_returns_correct_result(): void
+    {
+        $daySixteen = new Day16($this->file);
+        $this->assertEquals(64, $daySixteen->solve()['part2']);
     }
 }

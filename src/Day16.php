@@ -3,7 +3,6 @@
 namespace AdventOfCode2024;
 
 use RuntimeException;
-use SplPriorityQueue;
 
 class Day16
 {
@@ -23,6 +22,13 @@ class Day16
      * @var array<int, int>
      */
     private array $end;
+
+    private int $minScore = PHP_INT_MAX;
+
+    /**
+     * @var array<array<array<bool>|bool>>
+     */
+    private array $optimalRoutes = [];
 
     /**
      * @param  string  $file
@@ -61,76 +67,115 @@ class Day16
         }
     }
 
-    public function solve(): int
+    /**
+     * @return array<string, int>
+     */
+    public function solve(): array
     {
-        return $this->findShortestPath();
+        $weights = array_fill(0, count($this->grid), array_fill(0, count($this->grid[0]), PHP_INT_MAX));
+
+        $startDir = [false, true, false, false];
+        $visited = [];
+        $currentPath = [];
+
+        $this->findShortestPath(
+            $startDir,
+            $visited,
+            $this->start[0],
+            $this->start[1],
+            0,
+            $weights,
+            $currentPath
+        );
+
+        $uniqueTiles = [];
+        foreach ($this->optimalRoutes as $path) {
+            foreach ($path as $coord => $_) {
+                $uniqueTiles[$coord] = true;
+            }
+        }
+        $uniqueTiles["{$this->start[1]},{$this->start[0]}"] = true;
+        $uniqueTiles["{$this->end[1]},{$this->end[0]}"] = true;
+
+        return [
+            'part1' => $this->minScore,
+            'part2' => count($uniqueTiles),
+        ];
     }
 
-    private function findShortestPath(): int
-    {
-        $queue = new SplPriorityQueue;
-        $queue->setExtractFlags(SplPriorityQueue::EXTR_BOTH);
+    /**
+     * @param  array<array-key, bool>  $dir
+     * @param  array<array-key, bool>  $visited
+     * @param  array<array-key, bool>  $currentPath
+     * @param  array<array-key, array<array-key, int>>  $weights
+     */
+    private function findShortestPath(
+        array $dir,
+        array $visited,
+        int $x,
+        int $y,
+        int $currentScore,
+        array &$weights,
+        array &$currentPath
+    ): void {
+        if ($currentScore > $weights[$y][$x] + 1000) {
+            return;
+        }
+        if ($currentScore > $this->minScore) {
+            return;
+        }
 
-        $queue->insert([$this->start[0], $this->start[1], 0, 0], 0);  // East (no turn)
-        $queue->insert([$this->start[0], $this->start[1], 1, 1000], -1000);  // South (one turn)
-        $queue->insert([$this->start[0], $this->start[1], 2, 1000], -1000);  // West (one turn)
-        $queue->insert([$this->start[0], $this->start[1], 3, 1000], -1000);  // North (one turn)
-
-        $visited = [];
-        $directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // right, down, left, up
-        $minScore = PHP_INT_MAX;
-
-        while (! $queue->isEmpty()) {
-            $extracted = $queue->extract();
-            if (! is_array($extracted) || ! isset($extracted['data']) || ! is_array($extracted['data'])) {
-                continue;
-            }
-
-            $current = $extracted['data'];
-            if (count($current) !== 4) {
-                continue;
-            }
-
-            [$x, $y, $dir, $score] = array_map('intval', $current);
-
-            $state = "$x,$y,$dir";
-            if (isset($visited[$state]) && $visited[$state] <= $score) {
-                continue;
-            }
-            $visited[$state] = $score;
-
-            if ($x === $this->end[0] && $y === $this->end[1]) {
-                $minScore = min($minScore, $score);
-
-                continue;
-            }
-
-            $newX = $x + $directions[$dir][0];
-            $newY = $y + $directions[$dir][1];
-            if ($this->isValid($newX, $newY)) {
-                $queue->insert(
-                    [$newX, $newY, $dir, $score + 1],
-                    -($score + 1)
-                );
-            }
-
-            foreach ([($dir + 3) % 4, ($dir + 1) % 4] as $newDir) {
-                $checkX = $x + $directions[$newDir][0];
-                $checkY = $y + $directions[$newDir][1];
-                if ($this->isValid($checkX, $checkY)) {
-                    $queue->insert(
-                        [$x, $y, $newDir, $score + 1000],
-                        -($score + 1000)
-                    );
+        if ($x === $this->end[0] && $y === $this->end[1]) {
+            if ($currentScore <= $this->minScore) {
+                if ($currentScore < $this->minScore) {
+                    $this->minScore = $currentScore;
+                    $this->optimalRoutes = [];
                 }
+                $this->optimalRoutes[] = $currentPath;
+            }
+
+            return;
+        }
+
+        $visited["$y,$x"] = true;
+        $weights[$y][$x] = $currentScore;
+        $currentPath["$y,$x"] = true;
+
+        $directions = [
+            [0, 1, [false, true, false, false]],  // right
+            [1, 0, [true, false, false, false]],  // down
+            [0, -1, [false, false, true, false]], // left
+            [-1, 0, [false, false, false, true]],  // up
+        ];
+
+        foreach ($directions as [$dx, $dy, $newDir]) {
+            $newX = $x + $dx;
+            $newY = $y + $dy;
+
+            if ($this->isSafe($newX, $newY, $visited)) {
+                $costIncrease = ($dir === $newDir) ? 1 : 1001;
+
+                $this->findShortestPath(
+                    $newDir,
+                    $visited,
+                    $newX,
+                    $newY,
+                    $currentScore + $costIncrease,
+                    $weights,
+                    $currentPath
+                );
             }
         }
 
-        return $minScore;
+        unset($visited["$y,$x"]);
+        unset($currentPath["$y,$x"]);
     }
 
-    private function isValid(int $x, int $y): bool
+    /**
+     * @param  array<array-key, bool>  $visited
+     */
+    private function isSafe(int $x, int $y, array $visited): bool
     {
-        return isset($this->grid[$y][$x]) && $this->grid[$y][$x] !== '#';
+        return isset($this->grid[$y][$x]) && $this->grid[$y][$x] !== '#' && ! isset($visited["$y,$x"]);
     }
 }
