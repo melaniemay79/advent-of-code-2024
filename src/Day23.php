@@ -6,7 +6,10 @@ use RuntimeException;
 
 class Day23
 {
-    private string $input;
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private array $connected = [];
 
     /**
      * @param  string  $file
@@ -21,15 +24,103 @@ class Day23
 
         if ($input === false) {
             exit('Failed to read input file');
-        } else {
-            $this->input = $input;
         }
 
-        $this->processInput();
+        $this->processInput(trim($input));
     }
 
-    private function processInput(): void
+    private function processInput(string $input): void
     {
-        $input = $this->input;
+        $lines = explode("\n", $input);
+        $pairs = array_map(fn ($line) => explode('-', $line), $lines);
+
+        foreach ($pairs as [$a, $b]) {
+            $this->connected[$a][] = $b;
+            $this->connected[$b][] = $a;
+        }
+
+        foreach ($this->connected as &$connections) {
+            $connections = array_unique($connections);
+        }
+    }
+
+    public function part1(): int
+    {
+        $sets = [];
+        foreach ($this->connected as $first => $adjs) {
+            foreach ($adjs as $second) {
+                $commonNodes = array_intersect(
+                    $this->connected[$second] ?? [],
+                    $adjs
+                );
+                foreach ($commonNodes as $third) {
+                    if ($third !== $first && $third !== $second) {
+                        $triple = [$first, $second, $third];
+                        sort($triple);
+                        $sets[] = $triple;
+                    }
+                }
+            }
+        }
+
+        $sets = array_map(
+            fn (array $triple) => json_encode($triple, JSON_THROW_ON_ERROR),
+            $sets
+        );
+        $sets = array_unique($sets);
+        $sets = array_map(
+            fn ($json) => json_decode($json, true, 512, JSON_THROW_ON_ERROR),
+            $sets
+        );
+
+        $keep = array_filter($sets, function (mixed $set): bool {
+            if (! is_array($set)) {
+                return false;
+            }
+
+            return array_reduce($set, function (bool $carry, string $node): bool {
+                return $carry || str_starts_with($node, 't');
+            }, false);
+        });
+
+        return count($keep);
+    }
+
+    public function part2(): string
+    {
+        return $this->password([], array_keys($this->connected), []);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param  array<int, string>  $r
+     * @param  array<int, string>  $p
+     * @param  array<int, string>  $x
+     */
+    private function password(array $r, array $p, array $x): string
+    {
+        if (empty($p) && empty($x)) {
+            return implode(',', $r);
+        }
+
+        $max = '';
+        $pCopy = $p;
+
+        foreach ($pCopy as $v) {
+            $newR = array_merge($r, [$v]);
+            $newP = array_intersect($p, $this->connected[$v] ?? []);
+            $newX = array_intersect($x, $this->connected[$v] ?? []);
+
+            $pw = $this->password($newR, $newP, $newX);
+            if (strlen($pw) > strlen($max)) {
+                $max = $pw;
+            }
+
+            $p = array_diff($p, [$v]);
+            $x = array_merge($x, [$v]);
+        }
+
+        return $max;
     }
 }

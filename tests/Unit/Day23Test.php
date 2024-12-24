@@ -36,4 +36,19 @@ class Day23Test extends TestCase
 
         new Day23('nonexistent.txt');
     }
+
+    public function test_part_one_returns_correct_value(): void
+    {
+        $dayTwentyThree = new Day23($this->file);
+
+        $this->assertEquals(7, $dayTwentyThree->part1());
+    }
+
+    public function test_part_two_returns_correct_value(): void
+    {
+        $dayTwentyThree = new Day23($this->file);
+        $expected = 'co,de,ka,ta';
+
+        $this->assertEquals($expected, $dayTwentyThree->part2());
+    }
 }
