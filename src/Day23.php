@@ -106,6 +106,8 @@ class Day23
 
         $max = '';
         $pCopy = $p;
+        // Sort the candidates to ensure we process them in lexicographical order
+        sort($pCopy);
 
         foreach ($pCopy as $v) {
             $newR = array_merge($r, [$v]);
@@ -113,7 +115,7 @@ class Day23
             $newX = array_intersect($x, $this->connected[$v] ?? []);
 
             $pw = $this->password($newR, $newP, $newX);
-            if (strlen($pw) > strlen($max)) {
+            if (strlen($pw) > strlen($max) || (strlen($pw) === strlen($max) && $pw < $max)) {
                 $max = $pw;
             }
 
