@@ -36,4 +36,11 @@ class Day21Test extends TestCase
 
         new Day21('nonexistent.txt');
     }
+
+    public function test_part_one_returns_correct_value(): void
+    {
+        $dayTwentyOne = new Day21($this->file);
+
+        $this->assertEquals(126384, $dayTwentyOne->part1());
+    }
 }
