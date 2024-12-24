@@ -8,10 +8,19 @@ class Day24
 {
     private string $input;
 
+    /**
+     * @var array<string, int>
+     */
     private array $wires = [];
 
+    /**
+     * @var array<string, array<string>>
+     */
     private array $rules = [];
 
+    /**
+     * @var array<string, callable>
+     */
     private array $ops;
 
     /**
@@ -89,6 +98,6 @@ class Day24
 
         $zVals = implode('', array_map(fn ($wire) => $this->wires[$wire], $zWires));
 
-        return bindec($zVals);
+        return (int) bindec($zVals);
     }
 }
