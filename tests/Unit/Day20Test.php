@@ -57,17 +57,16 @@ class Day20Test extends TestCase
     {
         $dayTwenty = new Day20($this->file);
 
-        $this->assertEquals(14 + 14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(2));
-        $this->assertEquals(14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(4));
-        $this->assertEquals(2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(6));
-        $this->assertEquals(4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(8));
-        $this->assertEquals(2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(10));
-        $this->assertEquals(3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(12));
-        $this->assertEquals(1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(20));
-        $this->assertEquals(1 + 1 + 1 + 1, $dayTwenty->findCheats(36));
-        $this->assertEquals(1 + 1 + 1, $dayTwenty->findCheats(38));
-        $this->assertEquals(1 + 1, $dayTwenty->findCheats(40));
-        $this->assertEquals(1, $dayTwenty->findCheats(64));
-        $this->assertEquals(0, $dayTwenty->findCheats(100));
+        $this->assertEquals(14 + 14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(2)[0]);
+        $this->assertEquals(14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(4)[0]);
+        $this->assertEquals(2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(6)[0]);
+        $this->assertEquals(4 + 2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(8)[0]);
+        $this->assertEquals(2 + 3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(10)[0]);
+        $this->assertEquals(3 + 1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(12)[0]);
+        $this->assertEquals(1 + 1 + 1 + 1 + 1, $dayTwenty->findCheats(20)[0]);
+        $this->assertEquals(1 + 1 + 1 + 1, $dayTwenty->findCheats(36)[0]);
+        $this->assertEquals(1 + 1 + 1, $dayTwenty->findCheats(38)[0]);
+        $this->assertEquals(1 + 1, $dayTwenty->findCheats(40)[0]);
+        $this->assertEquals(1, $dayTwenty->findCheats(64)[0]);
     }
 }

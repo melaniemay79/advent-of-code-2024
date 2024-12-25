@@ -3,7 +3,6 @@
 namespace AdventOfCode2024;
 
 use RuntimeException;
-use SplPriorityQueue;
 
 class Day20
 {
@@ -65,52 +64,97 @@ class Day20
 
     /**
      * @param  array<int, int>  $start
-     * @param  array<int, int>  $end
+     * @return array<string, int>
      */
-    private function findShortestPath(array $start, array $end, bool $allowWalls = false): ?int
+    private function bfs(array $start): array
     {
-        $queue = new SplPriorityQueue;
-        $visited = [];
-        $queue->insert([$start[0], $start[1], 0], 0);
+        $unreachable = 10 ** 10;
+        $states = [];
+        $states["{$start[0]},{$start[1]}"] = 0;
+        $toUpdate = [$start];
 
-        while (! $queue->isEmpty()) {
-            /** @var array{0: int, 1: int, 2: int} $current */
-            $current = $queue->extract();
-            [$y, $x, $steps] = $current;
-
-            if ([$y, $x] === $end) {
-                return $steps;
-            }
-
-            $key = "$y,$x";
-            if (isset($visited[$key])) {
-                continue;
-            }
-            $visited[$key] = true;
+        while (! empty($toUpdate)) {
+            $state = array_pop($toUpdate);
+            $cost = $states["{$state[0]},{$state[1]}"];
 
             foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$dy, $dx]) {
-                $newY = $y + $dy;
-                $newX = $x + $dx;
+                $newY = $state[0] + $dy;
+                $newX = $state[1] + $dx;
 
-                if ($newY < 0 || $newY >= $this->height || $newX < 0 || $newX >= $this->width) {
+                if ($newY < 0 || $newY >= $this->height ||
+                    $newX < 0 || $newX >= $this->width ||
+                    $this->map[$newY][$newX] === '#') {
                     continue;
                 }
 
-                if (! $allowWalls && $this->map[$newY][$newX] === '#') {
-                    continue;
-                }
+                $newKey = "$newY,$newX";
+                $newCost = $cost + 1;
 
-                $queue->insert([$newY, $newX, $steps + 1], -($steps + 1));
+                if (! isset($states[$newKey]) || $newCost < $states[$newKey]) {
+                    $states[$newKey] = $newCost;
+                    $toUpdate[] = [$newY, $newX];
+                }
             }
         }
 
-        return null;
+        return $states;
     }
 
-    public function findCheats(int $savedTime): int
+    /**
+     * @param  array<int, int>  $loc
+     * @return array<int, array<int, int>>
+     */
+    private function generateManhattanPoints(array $loc, int $dist): array
     {
-        $normalPath = $this->findShortestPath($this->start, $this->end);
-        $cheats = 0;
+        $points = [];
+        [$i, $j] = $loc;
+
+        for ($di = 0; $di < $dist; $di++) {
+            $dj = $dist - $di;
+            $points[] = [$i + $di, $j + $dj];
+            $points[] = [$i + $dj, $j - $di];
+            $points[] = [$i - $di, $j - $dj];
+            $points[] = [$i - $dj, $j + $di];
+        }
+
+        return $points;
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function findCheats(int $savedTime): array
+    {
+        $endStates = $this->bfs($this->end);
+        $startStates = $this->bfs($this->start);
+        $fullCost = $startStates["{$this->end[0]},{$this->end[1]}"];
+        $cheatsP1 = 0;
+        $cheatsP2 = 0;
+
+        for ($y = 0; $y < $this->height; $y++) {
+            for ($x = 0; $x < $this->width; $x++) {
+                if ($this->map[$y][$x] !== '#') {
+                    continue;
+                }
+
+                foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$dy, $dx]) {
+                    $beforeY = $y + $dy; // Changed from y - dy
+                    $beforeX = $x + $dx; // Changed from x - dx
+                    $afterY = $y - $dy;  // Changed from y + dy
+                    $afterX = $x - $dx;  // Changed from x + dx
+
+                    $beforeKey = "$beforeY,$beforeX";
+                    $afterKey = "$afterY,$afterX";
+
+                    if (isset($startStates[$beforeKey]) && isset($endStates[$afterKey])) {
+                        $savings = $fullCost - $endStates[$afterKey] - $startStates[$beforeKey] - 2;
+                        if ($savings >= $savedTime) {
+                            $cheatsP1++;
+                        }
+                    }
+                }
+            }
+        }
 
         for ($y = 0; $y < $this->height; $y++) {
             for ($x = 0; $x < $this->width; $x++) {
@@ -118,48 +162,35 @@ class Day20
                     continue;
                 }
 
-                foreach ([[-2, 0], [2, 0], [0, -2], [0, 2], [-1, -1], [-1, 1], [1, -1], [1, 1]] as [$dy, $dx]) {
-                    $endY = $y + $dy;
-                    $endX = $x + $dx;
+                $startKey = "$y,$x";
+                if (! isset($startStates[$startKey])) {
+                    continue;
+                }
 
-                    if ($endY < 0 || $endY >= $this->height ||
-                        $endX < 0 || $endX >= $this->width ||
-                        $this->map[$endY][$endX] === '#') {
-                        continue;
-                    }
+                for ($dist = 1; $dist <= 20; $dist++) {
+                    foreach ($this->generateManhattanPoints([$y, $x], $dist) as $endPoint) {
+                        [$ey, $ex] = $endPoint;
 
-                    $hasWall = false;
-                    for ($i = 1; $i <= 2; $i++) {
-                        $checkY = (int) round($y + ($dy * $i / 2));
-                        $checkX = (int) round($x + ($dx * $i / 2));
-
-                        if ($checkY >= 0 && $checkY < $this->height &&
-                            $checkX >= 0 && $checkX < $this->width &&
-                            $this->map[$checkY][$checkX] === '#') {
-                            $hasWall = true;
-                            break;
+                        if ($ey < 0 || $ey >= $this->height ||
+                            $ex < 0 || $ex >= $this->width ||
+                            $this->map[$ey][$ex] === '#') {
+                            continue;
                         }
-                    }
 
-                    if (! $hasWall) {
-                        continue;
-                    }
+                        $endKey = "$ey,$ex";
+                        if (! isset($endStates[$endKey])) {
+                            continue;
+                        }
 
-                    $pathToCheat = $this->findShortestPath($this->start, [$y, $x]);
-                    $pathFromCheat = $this->findShortestPath([$endY, $endX], $this->end);
-
-                    if ($pathToCheat !== null && $pathFromCheat !== null) {
-                        $totalPath = $pathToCheat + $pathFromCheat + 2;
-                        $saved = $normalPath - $totalPath;
-
-                        if ($saved >= $savedTime) {
-                            $cheats++;
+                        $savings = $fullCost - $endStates[$endKey] - $startStates[$startKey] - $dist;
+                        if ($savings >= $savedTime) {
+                            $cheatsP2++;
                         }
                     }
                 }
             }
         }
 
-        return $cheats;
+        return [$cheatsP1, $cheatsP2];
     }
 }
