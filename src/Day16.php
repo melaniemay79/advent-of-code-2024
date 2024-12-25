@@ -11,7 +11,7 @@ class Day16
     /**
      * @var array<int, array<int, string>>
      */
-    private array $grid;
+    private array $grid = [];
 
     /**
      * @var array<int, int>
@@ -23,17 +23,14 @@ class Day16
      */
     private array $end;
 
-    private int $minScore = PHP_INT_MAX;
+    private const DIRECTIONS = [
+        'N' => [-1, 0],
+        'E' => [0, 1],
+        'S' => [1, 0],
+        'W' => [0, -1],
+    ];
 
-    /**
-     * @var array<array<array<bool>|bool>>
-     */
-    private array $optimalRoutes = [];
-
-    /**
-     * @param  string  $file
-     */
-    public function __construct($file)
+    public function __construct(string $file)
     {
         if (! file_exists($file)) {
             throw new RuntimeException('File not found');
@@ -43,139 +40,153 @@ class Day16
 
         if ($input === false) {
             exit('Failed to read input file');
-        } else {
-            $this->input = $input;
         }
 
-        $this->processInput();
+        $this->input = $input;
+        $this->parseInput();
     }
 
-    private function processInput(): void
+    private function parseInput(): void
     {
         $lines = explode("\n", trim($this->input));
-        $this->grid = [];
-
-        foreach ($lines as $y => $line) {
-            $this->grid[] = str_split($line);
-
-            if (($x = strpos($line, 'S')) !== false) {
-                $this->start = [$x, $y];
-            }
-            if (($x = strpos($line, 'E')) !== false) {
-                $this->end = [$x, $y];
+        foreach ($lines as $i => $line) {
+            $this->grid[$i] = str_split($line);
+            foreach ($this->grid[$i] as $j => $char) {
+                if ($char === 'S') {
+                    $this->start = [$i, $j];
+                } elseif ($char === 'E') {
+                    $this->end = [$i, $j];
+                }
             }
         }
     }
 
     /**
-     * @return array<string, int>
+     * @return array{part1: int, part2: int}
      */
     public function solve(): array
     {
-        $weights = array_fill(0, count($this->grid), array_fill(0, count($this->grid[0]), PHP_INT_MAX));
+        $all = [];
+        $z = [];
 
-        $startDir = [false, true, false, false];
-        $visited = [];
-        $currentPath = [];
+        $startDir = [$this->start, self::DIRECTIONS['E']];
+        $all[json_encode($startDir)] = 0;
+        $z[json_encode($startDir)] = true;
 
-        $this->findShortestPath(
-            $startDir,
-            $visited,
-            $this->start[0],
-            $this->start[1],
-            0,
-            $weights,
-            $currentPath
-        );
+        while (! empty($z)) {
+            $key = array_key_first($z);
+            unset($z[$key]);
+            /** @var array{0: array{int, int}, 1: array{int, int}} $state */
+            $state = json_decode((string) $key, true);
+            $cost = $all[$key];
 
-        $uniqueTiles = [];
-        foreach ($this->optimalRoutes as $path) {
-            foreach ($path as $coord => $_) {
-                $uniqueTiles[$coord] = true;
+            foreach ($this->next($state) as $new => $inc) {
+                /** @var array{0: array{int, int}, 1: array{int, int}} $newState */
+                $newState = json_decode((string) $new, true);
+                [$b, $c] = $newState;
+                if (! isset($this->grid[$b[0]][$b[1]]) || $this->grid[$b[0]][$b[1]] === '#') {
+                    continue;
+                }
+
+                $newCost = $cost + $inc;
+                if (! isset($all[$new]) || $newCost < $all[$new]) {
+                    $all[$new] = $newCost;
+                    $z[$new] = true;
+                }
             }
         }
-        $uniqueTiles["{$this->start[1]},{$this->start[0]}"] = true;
-        $uniqueTiles["{$this->end[1]},{$this->end[0]}"] = true;
+
+        $min = PHP_INT_MAX;
+        $last = null;
+        foreach (self::DIRECTIONS as $dir) {
+            $state = json_encode([$this->end, $dir]);
+            if (isset($all[$state]) && $all[$state] < $min) {
+                $min = $all[$state];
+                $last = $state;
+            }
+        }
+
+        $xsOnPath = [$this->end[0].','.$this->end[1] => true];
+        $pending = [$last => true];
+
+        while (! empty($pending)) {
+            $key = array_key_first($pending);
+            unset($pending[$key]);
+            /** @var array{0: array{int, int}, 1: array{int, int}} $state */
+            $state = json_decode((string) $key, true);
+            $cost = $all[$key];
+
+            foreach ($this->prev($state) as $prevState => $inc) {
+                /** @var array{0: array{int, int}, 1: array{int, int}} $prevStateData */
+                $prevStateData = json_decode((string) $prevState, true);
+                [$d, $y] = $prevStateData;
+
+                if (! isset($this->grid[$d[0]][$d[1]]) || $this->grid[$d[0]][$d[1]] === '#') {
+                    continue;
+                }
+
+                if (isset($all[$prevState]) && ($cost === $all[$prevState] + $inc)) {
+                    $pending[$prevState] = true;
+                    $xsOnPath[$d[0].','.$d[1]] = true;
+                }
+            }
+        }
 
         return [
-            'part1' => $this->minScore,
-            'part2' => count($uniqueTiles),
+            'part1' => $min,
+            'part2' => count($xsOnPath),
         ];
     }
 
     /**
-     * @param  array<array-key, bool>  $dir
-     * @param  array<array-key, bool>  $visited
-     * @param  array<array-key, bool>  $currentPath
-     * @param  array<array-key, array<array-key, int>>  $weights
+     * @param  array{0: array{int, int}, 1: array{int, int}}  $state
+     * @return array<int|string, int>
      */
-    private function findShortestPath(
-        array $dir,
-        array $visited,
-        int $x,
-        int $y,
-        int $currentScore,
-        array &$weights,
-        array &$currentPath
-    ): void {
-        if ($currentScore > $weights[$y][$x] + 1000) {
-            return;
-        }
-        if ($currentScore > $this->minScore) {
-            return;
-        }
-
-        if ($x === $this->end[0] && $y === $this->end[1]) {
-            if ($currentScore <= $this->minScore) {
-                if ($currentScore < $this->minScore) {
-                    $this->minScore = $currentScore;
-                    $this->optimalRoutes = [];
-                }
-                $this->optimalRoutes[] = $currentPath;
-            }
-
-            return;
-        }
-
-        $visited["$y,$x"] = true;
-        $weights[$y][$x] = $currentScore;
-        $currentPath["$y,$x"] = true;
-
-        $directions = [
-            [0, 1, [false, true, false, false]],  // right
-            [1, 0, [true, false, false, false]],  // down
-            [0, -1, [false, false, true, false]], // left
-            [-1, 0, [false, false, false, true]],  // up
-        ];
-
-        foreach ($directions as [$dx, $dy, $newDir]) {
-            $newX = $x + $dx;
-            $newY = $y + $dy;
-
-            if ($this->isSafe($newX, $newY, $visited)) {
-                $costIncrease = ($dir === $newDir) ? 1 : 1001;
-
-                $this->findShortestPath(
-                    $newDir,
-                    $visited,
-                    $newX,
-                    $newY,
-                    $currentScore + $costIncrease,
-                    $weights,
-                    $currentPath
-                );
-            }
-        }
-
-        unset($visited["$y,$x"]);
-        unset($currentPath["$y,$x"]);
-    }
-
-    /**
-     * @param  array<array-key, bool>  $visited
-     */
-    private function isSafe(int $x, int $y, array $visited): bool
+    private function next(array $state): array
     {
-        return isset($this->grid[$y][$x]) && $this->grid[$y][$x] !== '#' && ! isset($visited["$y,$x"]);
+        [$x, $dir] = $state;
+        $nextStates = [];
+
+        $b = $this->add($x, $dir);
+        $nextStates[json_encode([$b, $dir])] = 1;
+
+        $c = [$dir[1], -$dir[0]];
+        $nextStates[json_encode([$x, $c])] = 1000;
+
+        $c = [-$dir[1], $dir[0]];
+        $nextStates[json_encode([$x, $c])] = 1000;
+
+        return $nextStates;
+    }
+
+    /**
+     * @param  array{0: array{int, int}, 1: array{int, int}}  $state
+     * @return array<int|string, int>
+     */
+    private function prev(array $state): array
+    {
+        [$x, $dir] = $state;
+        $prev = [];
+
+        $d = $this->add($x, [-$dir[0], -$dir[1]]);
+        $prev[json_encode([$d, $dir])] = 1;
+
+        $y = [-$dir[1], $dir[0]];
+        $prev[json_encode([$x, $y])] = 1000;
+
+        $y = [$dir[1], -$dir[0]];
+        $prev[json_encode([$x, $y])] = 1000;
+
+        return $prev;
+    }
+
+    /**
+     * @param  array{int, int}  $p1
+     * @param  array{int, int}  $p2
+     * @return array{int|string, int}
+     */
+    private function add(array $p1, array $p2): array
+    {
+        return [$p1[0] + $p2[0], $p1[1] + $p2[1]];
     }
 }
