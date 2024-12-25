@@ -7,13 +7,9 @@ use RuntimeException;
 class Day12
 {
     /**
-     * @var array<int, string>
+     * @var array<int|string, string>
      */
-    private array $map;
-
-    private int $rows;
-
-    private int $cols;
+    private array $data = [];
 
     /**
      * @param  string  $file
@@ -35,69 +31,106 @@ class Day12
 
     private function processInput(string $input): void
     {
-        $this->map = explode("\n", trim($input));
-        $this->rows = count($this->map);
-        $this->cols = strlen($this->map[0]);
-    }
+        $lines = explode("\n", trim($input));
 
-    public function calculateTotalPrice(): int
-    {
-        $visited = array_fill(0, $this->rows, array_fill(0, $this->cols, false));
-        $totalPrice = 0;
-
-        for ($i = 0; $i < $this->rows; $i++) {
-            for ($j = 0; $j < $this->cols; $j++) {
-                if (! $visited[$i][$j]) {
-                    $regionData = $this->exploreRegion($i, $j, $visited);
-                    $totalPrice += $regionData['area'] * $regionData['perimeter'];
-                }
+        foreach ($lines as $i => $line) {
+            for ($j = 0; $j < strlen($line); $j++) {
+                $this->data["$i,$j"] = $line[$j];
             }
         }
-
-        return $totalPrice;
     }
 
     /**
-     * @param  array<array-key, array<array-key, string>>  $visited
-     * @return array<array-key, int>
+     * @param  array<int, int>  $p1
+     * @param  array<int, int>  $p2
+     * @return array<int, int>
      */
-    private function exploreRegion(int $row, int $col, array &$visited): array
+    private function add(array $p1, array $p2): array
     {
-        $plantType = $this->map[$row][$col];
-        $area = 0;
-        $perimeter = 0;
-        $stack = [[$row, $col]];
-        $visited[$row][$col] = true;
-
-        while (! empty($stack)) {
-            [$currentRow, $currentCol] = array_pop($stack);
-            $area++;
-
-            $directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-            foreach ($directions as [$dr, $dc]) {
-                $newRow = $currentRow + $dr;
-                $newCol = $currentCol + $dc;
-
-                if ($this->isInBounds($newRow, $newCol)) {
-                    if ($this->map[$newRow][$newCol] === $plantType) {
-                        if (! $visited[$newRow][$newCol]) {
-                            $visited[$newRow][$newCol] = true;
-                            $stack[] = [$newRow, $newCol];
-                        }
-                    } else {
-                        $perimeter++;
-                    }
-                } else {
-                    $perimeter++;
-                }
-            }
-        }
-
-        return ['area' => $area, 'perimeter' => $perimeter];
+        return [$p1[0] + $p2[0], $p1[1] + $p2[1]];
     }
 
-    private function isInBounds(int $row, int $col): bool
+    /**
+     * @param  array<array-key, array<array-key, array<int, int>>>  $sets
+     */
+    private function totalSides(array &$sets): int
     {
-        return $row >= 0 && $row < $this->rows && $col >= 0 && $col < $this->cols;
+        $sides = [];
+        while (! empty($sets)) {
+            $pair = array_pop($sets);
+            [$loc, $out] = $pair;
+            $side = [$pair];
+            [$di, $dj] = $out;
+            $right = [$dj, -$di];
+            $left = [-$dj, $di];
+
+            $rloc = $this->add($loc, $right);
+            while (isset($sets[implode(',', $rloc).','.implode(',', $out)])) {
+                unset($sets[implode(',', $rloc).','.implode(',', $out)]);
+                $side[] = [$rloc, $out];
+                $rloc = $this->add($rloc, $right);
+            }
+
+            $lloc = $this->add($loc, $left);
+            while (isset($sets[implode(',', $lloc).','.implode(',', $out)])) {
+                unset($sets[implode(',', $lloc).','.implode(',', $out)]);
+                $side[] = [$lloc, $out];
+                $lloc = $this->add($lloc, $left);
+            }
+            $sides[] = $side;
+        }
+
+        return count($sides);
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function calculateTotalPrice(): array
+    {
+        $dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+        $areas = [];
+        $a = [];
+        $b = [];
+        $part1 = 0;
+        $part2 = 0;
+
+        foreach ($this->data as $z => $c) {
+            if (isset($areas[$z])) {
+                continue;
+            }
+
+            $loc = array_map('intval', explode(',', (string) $z));
+            $new = [$z => true];
+            $b[] = &$new;
+            $a[$z] = &$new;
+            $s = [$loc];
+            $border = [];
+
+            while (! empty($s)) {
+                $nloc = array_pop($s);
+                foreach ($dirs as $d) {
+                    $u = $this->add($nloc, $d);
+                    $uStr = implode(',', $u);
+
+                    if (isset($this->data[$uStr]) && $this->data[$uStr] === $c) {
+                        if (! isset($areas[$uStr])) {
+                            $s[] = $u;
+                            $a[$uStr] = &$new;
+                            $new[$uStr] = true;
+                            $areas[$uStr] = true;
+                        }
+                    } else {
+                        $borderKey = implode(',', $nloc).','.implode(',', $d);
+                        $border[$borderKey] = [$nloc, $d];
+                    }
+                }
+            }
+
+            $part1 += count($border) * count($new);
+            $part2 += $this->totalSides($border) * count($new);
+        }
+
+        return ['part1' => $part1, 'part2' => $part2];
     }
 }

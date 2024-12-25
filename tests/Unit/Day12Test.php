@@ -54,6 +54,7 @@ class Day12Test extends TestCase
 
         $result = $dayTwelve->calculateTotalPrice();
 
-        $this->assertEquals(1930, $result);
+        $this->assertEquals(1930, $result['part1']);
+        $this->assertEquals(1206, $result['part2']);
     }
 }
