@@ -10,9 +10,12 @@ class Day24Test extends TestCase
 {
     private string $file;
 
+    private string $file2;
+
     protected function setUp(): void
     {
         $this->file = __DIR__.'/../data/input_24.txt';
+        $this->file2 = __DIR__.'/../data/input_24_part_2.txt';
     }
 
     public function test_constructor_processes_input_correctly(): void
@@ -42,5 +45,12 @@ class Day24Test extends TestCase
         $dayTwentyFour = new Day24($this->file);
 
         $this->assertEquals(2024, $dayTwentyFour->part1());
+    }
+
+    public function test_part_two_returns_correct_value(): void
+    {
+        $dayTwentyFour = new Day24($this->file2);
+        $expected = 'z00,z01,z02,z03,z04';
+        $this->assertEquals($expected, $dayTwentyFour->part2());
     }
 }

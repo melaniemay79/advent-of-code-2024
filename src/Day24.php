@@ -62,7 +62,9 @@ class Day24
         $ruleLines = array_slice($lines, $midIndex + 1);
         foreach ($ruleLines as $line) {
             $parts = explode(' ', $line);
-            $this->rules[$parts[4]] = array_slice($parts, 0, 3);
+            if (count($parts) >= 5) {
+                $this->rules[$parts[4]] = array_slice($parts, 0, 3);
+            }
         }
     }
 
@@ -99,5 +101,56 @@ class Day24
         $zVals = implode('', array_map(fn ($wire) => $this->wires[$wire], $zWires));
 
         return (int) bindec($zVals);
+    }
+
+    public function part2(): string
+    {
+        $wrong = [];
+        $highestZ = 'z00';
+
+        foreach ($this->rules as $wire => $rule) {
+            if (str_starts_with($wire, 'z') && $wire > $highestZ) {
+                $highestZ = $wire;
+            }
+        }
+
+        foreach ($this->rules as $wire => $rule) {
+            [$op1, $op, $op2] = $rule;
+
+            if (str_starts_with($wire, 'z') && $op !== 'XOR' && $wire !== $highestZ) {
+                $wrong[] = $wire;
+            }
+
+            if ($op === 'XOR'
+                && ! str_starts_with($wire, 'x') && ! str_starts_with($wire, 'y') && ! str_starts_with($wire, 'z')
+                && ! str_starts_with($op1, 'x') && ! str_starts_with($op1, 'y') && ! str_starts_with($op1, 'z')
+                && ! str_starts_with($op2, 'x') && ! str_starts_with($op2, 'y') && ! str_starts_with($op2, 'z')
+            ) {
+                $wrong[] = $wire;
+            }
+
+            if ($op === 'AND' && $op1 !== 'x00' && $op2 !== 'x00') {
+                foreach ($this->rules as $subRule) {
+                    if (($wire === $subRule[0] || $wire === $subRule[2]) && $subRule[1] !== 'OR') {
+                        $wrong[] = $wire;
+                        break;
+                    }
+                }
+            }
+
+            if ($op === 'XOR') {
+                foreach ($this->rules as $subRule) {
+                    if (($wire === $subRule[0] || $wire === $subRule[2]) && $subRule[1] === 'OR') {
+                        $wrong[] = $wire;
+                        break;
+                    }
+                }
+            }
+        }
+
+        $wrong = array_unique($wrong);
+        sort($wrong);
+
+        return implode(',', $wrong);
     }
 }
