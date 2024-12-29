@@ -13,137 +13,133 @@ class Day17
     private int $registerC;
 
     /**
-     * @var array<int, int>
+     * @var array<int|null>
      */
     private array $program;
 
-    /**
-     * @param  string  $file
-     */
-    public function __construct($file)
+    public function __construct(string $file)
     {
         if (! file_exists($file)) {
             throw new RuntimeException('File not found');
         }
 
-        $input = file_get_contents($file);
+        $input = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         if ($input === false) {
             exit('Failed to read input file');
         }
 
-        $this->processInput($input);
+        $this->registerA = (int) $this->getData($input[0]);
+        $this->registerB = (int) $this->getData($input[1]);
+        $this->registerC = (int) $this->getData($input[2]);
+        $this->program = array_map('intval', explode(',', $this->getData($input[3])));
     }
 
-    private function processInput(string $input): void
+    private function getData(string $line): string
     {
-        preg_match('/Register A: (\d+)/', $input, $matchesA);
-        preg_match('/Register B: (\d+)/', $input, $matchesB);
-        preg_match('/Register C: (\d+)/', $input, $matchesC);
-
-        $this->registerA = (int) ($matchesA[1] ?? 0);
-        $this->registerB = (int) ($matchesB[1] ?? 0);
-        $this->registerC = (int) ($matchesC[1] ?? 0);
-
-        preg_match('/Program: (.+)/', $input, $matchesProgram);
-        $this->program = array_map('intval', explode(',', $matchesProgram[1] ?? ''));
+        return explode(': ', $line)[1];
     }
 
-    public function execute(): string
+    private function combo(?int $a, ?int $b, ?int $c, ?int $value): ?int
     {
-        $output = [];
-        $instructionPointer = 0;
-
-        while ($instructionPointer < count($this->program)) {
-            // Break if we're at the last instruction and can't read an operand
-            if ($instructionPointer === count($this->program) - 1) {
-                break;
-            }
-
-            $opcode = $this->program[$instructionPointer];
-            $operand = $this->program[$instructionPointer + 1];
-
-            switch ($opcode) {
-                case 0: // adv
-                    $this->registerA = (int) ($this->registerA / (2 ** $this->getComboValue($operand)));
-                    $instructionPointer += 2;
-                    break;
-                case 1: // bxl
-                    $this->registerB ^= $operand;
-                    $instructionPointer += 2;
-                    break;
-                case 2: // bst
-                    $this->registerB = $this->getComboValue($operand) % 8;
-                    $instructionPointer += 2;
-                    break;
-                case 3: // jnz
-                    if ($this->registerA !== 0) {
-                        $instructionPointer = $operand;
-                    } else {
-                        $instructionPointer += 2;
-                    }
-                    break;
-                case 4: // bxc
-                    $this->registerB ^= $this->registerC;
-                    $instructionPointer += 2;
-                    break;
-                case 5: // out
-                    $output[] = $this->getComboValue($operand) % 8;
-                    $instructionPointer += 2;
-                    break;
-                case 6: // bdv
-                    $this->registerB = (int) ($this->registerA / (2 ** $this->getComboValue($operand)));
-                    $instructionPointer += 2;
-                    break;
-                case 7: // cdv
-                    $this->registerC = (int) ($this->registerA / (2 ** $this->getComboValue($operand)));
-                    $instructionPointer += 2;
-                    break;
-            }
-        }
-
-        return implode(',', $output);
-    }
-
-    private function getComboValue(int $operand): int
-    {
-        if ($operand <= 3) {
-            return $operand;
-        }
-
-        return match ($operand) {
-            4 => $this->registerA,
-            5 => $this->registerB,
-            6 => $this->registerC,
-            default => throw new RuntimeException('Invalid combo operand: '.$operand),
+        return match ($value) {
+            0, 1, 2, 3 => $value,
+            4 => $a,
+            5 => $b,
+            6 => $c,
+            default => null,
         };
     }
 
-    public function findSelfReplicatingValue(): int
+    /**
+     * @param  array<int|null>  $program
+     * @return array<int, int|null>
+     */
+    private function eval(?int $a, ?int $b, ?int $c, ?int $ip, array $program): array
     {
-        $targetProgram = implode(',', $this->program);
-        $initialA = 1;
+        $opcode = $program[$ip];
+        $arg = $program[$ip + 1];
+        $comb = $this->combo($a, $b, $c, $arg);
 
-        while ($initialA <= PHP_INT_MAX) {
-            $this->registerA = $initialA;
-            $this->registerB = 0;
-            $this->registerC = 0;
+        switch ($opcode) {
+            case 0:
+                $num = $a;
+                $denom = 2 ** $comb;
 
-            $output = $this->execute();
+                return [null, (int) ($num / $denom), $b, $c, $ip + 2];
+            case 1:
+                return [null, $a, $b ^ $arg, $c, $ip + 2];
+            case 2:
+                return [null, $a, $comb % 8, $c, $ip + 2];
+            case 3:
+                return $a === 0 ? [null, $a, $b, $c, $ip + 2] : [null, $a, $b, $c, $arg];
+            case 4:
+                return [null, $a, $b ^ $c, $c, $ip + 2];
+            case 5:
+                return [$comb % 8, $a, $b, $c, $ip + 2];
+            case 6:
+                $num = $a;
+                $denom = 2 ** $comb;
 
-            if ($output === $targetProgram) {
-                return $initialA;
-            }
+                return [null, $a, (int) ($num / $denom), $c, $ip + 2];
+            case 7:
+                $num = $a;
+                $denom = 2 ** $comb;
 
-            // Use larger increments initially, then refine when we get closer
-            if ($initialA < 1000000000) {
-                $initialA++;
-            } elseif ($initialA < 10000000000) {
-                $initialA += 10;
-            } else {
-                $initialA += 1000000000;
+                return [null, $a, $b, (int) ($num / $denom), $ip + 2];
+            default:
+                throw new RuntimeException('Invalid opcode: '.$opcode);
+        }
+    }
+
+    /**
+     * @param  array<int|null>  $program
+     * @return array<int, int|null>
+     */
+    public function runProgram(int $a, int $b, int $c, array $program): array
+    {
+        $ip = 0;
+        $res = [];
+        while ($ip < count($program) - 1) {
+            [$out, $a, $b, $c, $ip] = $this->eval($a, $b, $c, $ip, $program);
+            if ($out !== null) {
+                $res[] = $out;
             }
         }
-        throw new RuntimeException('No solution found within reasonable limits');
+
+        return $res;
+    }
+
+    /**
+     * @param  array<int|null>  $program
+     */
+    public function getBestQuineInput(array $program, int $cursor, int $sofar): ?int
+    {
+        for ($candidate = 0; $candidate < 8; $candidate++) {
+            if ($this->runProgram($sofar * 8 + $candidate, 0, 0, $program) === array_slice($program, $cursor)) {
+                if ($cursor === 0) {
+                    return $sofar * 8 + $candidate;
+                }
+                $ret = $this->getBestQuineInput($program, $cursor - 1, $sofar * 8 + $candidate);
+                if ($ret !== null) {
+                    return $ret;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array<int, int|string|null>
+     */
+    public function execute(): array
+    {
+        $output = $this->runProgram($this->registerA, $this->registerB, $this->registerC, $this->program);
+
+        return [
+            implode(',', $output),
+            $this->getBestQuineInput($this->program, count($this->program) - 1, 0),
+        ];
     }
 }

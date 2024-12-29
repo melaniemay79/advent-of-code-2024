@@ -56,12 +56,12 @@ class Day17Test extends TestCase
     public function test_execute_method_returns_correct_output(): void
     {
         $daySeventeen = new Day17($this->file);
-        $this->assertEquals('4,6,3,5,6,3,5,2,1,0', $daySeventeen->execute());
+        $this->assertEquals('4,6,3,5,6,3,5,2,1,0', $daySeventeen->execute()[0]);
     }
 
     public function test_find_self_replicating_value_method_returns_correct_output(): void
     {
         $daySeventeen = new Day17($this->file2);
-        $this->assertEquals(117440, $daySeventeen->findSelfReplicatingValue());
+        $this->assertEquals(117440, $daySeventeen->execute()[1]);
     }
 }
