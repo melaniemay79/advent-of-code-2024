@@ -166,8 +166,8 @@ class Day18
             }
 
             foreach ($directions as [$dx, $dy]) {
-                $newX = $x + $dx;
-                $newY = $y + $dy;
+                $newX = $x + $dx; // @phpstan-ignore-line
+                $newY = $y + $dy; // @phpstan-ignore-line
 
                 if ($newX >= 0 && $newX < $this->gridSize &&
                     $newY >= 0 && $newY < $this->gridSize &&

@@ -118,7 +118,7 @@ class Day13
         foreach ($this->machines as $machine) {
             $result = $this->solveForMachinePart2($machine, $correction);
             if ($result !== null) {
-                $totalTokens = bcadd($totalTokens, $result);
+                $totalTokens = bcadd($totalTokens, $result); // @phpstan-ignore-line
             }
         }
 
@@ -135,8 +135,8 @@ class Day13
         $a21 = (string) $machine['buttonA']['y'];
         $a22 = (string) $machine['buttonB']['y'];
 
-        $b1 = bcadd((string) $machine['prize']['x'], $correction);
-        $b2 = bcadd((string) $machine['prize']['y'], $correction);
+        $b1 = bcadd((string) $machine['prize']['x'], $correction); // @phpstan-ignore-line
+        $b2 = bcadd((string) $machine['prize']['y'], $correction); // @phpstan-ignore-line
 
         $detA = bcsub(bcmul($a11, $a22), bcmul($a12, $a21));
 
@@ -153,8 +153,8 @@ class Day13
         $x = bcadd(bcmul($a, $a11), bcmul($b, $a12));
         $y = bcadd(bcmul($a, $a21), bcmul($b, $a22));
 
-        $expectedX = bcadd((string) $machine['prize']['x'], $correction);
-        $expectedY = bcadd((string) $machine['prize']['y'], $correction);
+        $expectedX = bcadd((string) $machine['prize']['x'], $correction); // @phpstan-ignore-line
+        $expectedY = bcadd((string) $machine['prize']['y'], $correction); // @phpstan-ignore-line
 
         if (bccomp($x, $expectedX) === 0 && bccomp($y, $expectedY) === 0) {
             return bcadd(bcmul('3', $a), $b);

@@ -78,7 +78,11 @@ class Day23
                 return false;
             }
 
-            return array_reduce($set, function (bool $carry, string $node): bool {
+            return array_reduce($set, function (bool $carry, $node): bool {
+                if (! is_string($node)) {
+                    return false;
+                }
+
                 return $carry || str_starts_with($node, 't');
             }, false);
         });

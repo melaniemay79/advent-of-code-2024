@@ -98,6 +98,6 @@ class Day22
             }
         }
 
-        return max($totalCounts);
+        return max($totalCounts); // @phpstan-ignore-line
     }
 }

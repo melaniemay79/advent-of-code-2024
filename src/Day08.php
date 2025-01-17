@@ -73,7 +73,7 @@ class Day08
     {
         $antinodePositions = [];
 
-        if (! is_array($this->input) || empty($this->input) || ! is_array($this->input[0])) {
+        if (empty($this->input) || ! is_array($this->input[0])) {
             return [];
         }
 
@@ -184,7 +184,7 @@ class Day08
             $antinodePositions = $this->calculateAntinodesPart1($antennas);
         }
 
-        if (! is_array($this->input) || empty($this->input) || ! is_array($this->input[0])) {
+        if (empty($this->input) || ! is_array($this->input[0])) {
             return 0;
         }
         $uniqueAntinodes = [];

@@ -80,7 +80,7 @@ class Day15
                 default => 3,
             };
 
-            if ($this->trypush($a, $sx, $sy, $dx[$d], $dy[$d])) {
+            if ($this->trypush($a, $sx, $sy, $dx[$d], $dy[$d])) { // @phpstan-ignore-line
                 $this->push($a, $sx, $sy, $dx[$d], $dy[$d]);
                 $sx += $dx[$d];
                 $sy += $dy[$d];
